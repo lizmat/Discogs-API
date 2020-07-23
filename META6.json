@@ -13,7 +13,7 @@
     "API::Discogs" : "lib/API/Discogs.pm6"
   },
   "resources" : [ ],
-  "source-url" : "",
+  "source-url" : "https://github.com/lizmat/API-Discogs.git",
   "tags" : [ "API", "JSON", "DISCOGS" ],
   "test-depends" : [ ],
   "version" : "0.0.1"
