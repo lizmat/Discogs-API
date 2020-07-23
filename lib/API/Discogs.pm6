@@ -1,143 +1,62 @@
-unit class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH>;
+use API::Discogs::Classes;
+use Cro::HTTP::Client;
 
-use Hash2Class;
-#use Cro::HTTP::Client;
-#
-#my $client := Cro::HTTP::Client.new:
-#  base-uri => "https://api.discogs.com",
-#  headers => [
-#    User-agent => "Raku Discogs Agent v" ~ $?CLASS.^ver,
-#  ];
-#my $resp := await $client.get("/releases/249504");
-#my $json := await $resp.body;
+# supported currencies
+my constant @currencies = <
+  USD GBP EUR CAD AUD JPY CHF MXN BRL NZD SEK ZAR
+>;
+subset AllowedCurrency of Str where * (elem) @currencies;
 
-our subset URL of Str where .starts-with("https://") || .starts-with("http://");
-our subset Username of Str where /^ \w+ $/;
-our subset Status of Str where "Accepted";
-our subset Price of Real;
-our subset Country of Str;
-our subset Genre of Str;
-our subset Year of UInt where $_ > 1900 && $_ <= 2100;
+# needs to be defined here for visibility
+my $default-client;
 
-our class Artist does Hash2Class[
-  anv          => Str,
-  id           => UInt,
-  join         => Str,
-  name         => Str,
-  resource_url => URL,
-  role         => Str,
-  tracks       => Str,
-] { }
+class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
+    has AllowedCurrency $.currency = @currencies[0];
+    has Cro::HTTP::Client $.client = $default-client;
+    has Str $.key;
+    has Str $!secret is built;
 
-our class Rating does Hash2Class[
-  average => Numeric,
-  count   => Int,
-] { }
+    # main worker for creating non-asynchronous work
+    method !objectify($uri, $class) {
+        my $resp := await $.client.get(
+          $!secret && $.key
+            ?? ($uri, headers => (
+                 Authorization => "Discogs key=$.key, secret=$!secret"
+               ))
+            !! $uri
+        );
+        $class.new(await $resp.body)
+    }
 
-our class User does Hash2Class[
-  resource_url => URL,
-  username     => Username,
-] { }
+    method release(UInt:D $id, AllowedCurrency:D $currency = $.currency) {
+        self!objectify("/releases/$id?$currency", Release)
+    }
 
-our class Community does Hash2Class[
-  '@contributors' => User,
-  data_quality    => Str,
-  have            => Int,
-  rating          => Rating,
-  status          => Status,
-  submitter       => User,
-  want            => Int,
-] { }
+    multi method release-user-rating(UInt:D $id, Username $username) {
+        self!objectify("/releases/$id/rating/$username", ReleaseUserRating)
+    }
+    multi method release-user-rating(Release:D $release, Username $username) {
+        self.release-user-rating($release.id, $username)
+    }
+}
 
-our class CatalogEntry does Hash2Class[
-  catno            => Str,
-  entity_type      => Int,
-  entity_type_name => Str,
-  id               => UInt,
-  name             => Str,
-  resource_url     => URL,
-] { }
+$default-client := Cro::HTTP::Client.new:
+  base-uri => "https://api.discogs.com",
+  headers => (
+    Accepts    => "application/vnd.discogs.v2.discogs+json",
+    User-agent => "Raku Discogs Agent v" ~ API::Discogs.^ver,
+  );
 
-our class Format does Hash2Class[
-  '@descriptions' => Str,
-  name            => Str,
-  qty             => Int,
-] { }
+my $discogs := API::Discogs.new;
+my $release := $discogs.release(249504);
 
-our class Identifier does Hash2Class[
-  type  => Str,
-  value => Str,
-] { }
-
-our class Image does Hash2Class[
-  height       => UInt,
-  resource_url => URL,
-  type         => Str,
-  uri          => URL,
-  uri150       => URL,
-  width        => UInt,
-] { }
-
-our class Track does Hash2Class[
-  duration => Str,
-  position => Str,
-  title    => Str,
-  type_    => Str,
-] { }
-
-our class Video does Hash2Class[
-  description => Str,
-  duration    => Int,
-  embed       => Bool,
-  title       => Str,
-  uri         => URL,
-] { }
-
-our class Release does Hash2Class[
-  '@artists'        => Artist,
-  '@companies'      => CatalogEntry,
-  '@extraartists'   => Artist,
-  '@formats'        => Format,
-  '@genres'         => Genre,
-  '@identifiers'    => Identifier,
-  '@images'         => Image,
-  '@labels'         => CatalogEntry,
-  '@series'         => CatalogEntry,
-  '@styles'         => Str,
-  '@tracklist'      => Track,
-  '@videos'         => Video,
-  artists_sort      => Str,
-  community         => Community,
-  country           => Country,
-  data_quality      => Str,
-  date_added        => DateTime(Str),
-  date_changed      => DateTime(Str),
-  estimated_weight  => UInt,
-  format_quantity   => UInt,
-  id                => UInt,
-  lowest_price      => Price,
-  master_id         => UInt,
-  master_url        => URL,
-  notes             => Str,
-  num_for_sale      => UInt,
-  released          => Str,
-  release_formatted => Str,
-  resource_url      => URL,
-  status            => Status,
-  thumb             => URL,
-  title             => Str,
-  uri               => URL,
-  year              => Year,
-] { }
-
-use JSON::Fast;
-my $json := from-json("249504.release".IO.slurp);
-
-my $release := Release.new($json);
 dd $_ for $release.community.contributors;
 dd $release.released;
 dd $release.date_added;
 dd $release.artists;
+
+my $rating := $discogs.release-user-rating($release, "memory");
+dd $rating;
 
 #dd $json<artists>[0];
 #my $artist = Artist.new($json<artists>[0]);
