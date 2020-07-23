@@ -1,0 +1,20 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ "Cro::HTTP::Client", "Hash2Class" ],
+  "description" : "Provide basic API to Discogs",
+  "license" : "Artistic-2.0",
+  "name" : "API::Discogs",
+  "perl" : "6.d",
+  "provides" : {
+    "API::Discogs" : "lib/API/Discogs.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "",
+  "tags" : [ "API", "JSON", "DISCOGS" ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
