@@ -13,6 +13,7 @@ my $default-client;
 class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     has AllowedCurrency $.currency = @currencies[0];
     has Cro::HTTP::Client $.client = $default-client;
+    has UInt            $.per-page = 50;
     has Str $.key;
     has Str $!secret is built;
 
@@ -28,15 +29,30 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         $class.new(await $resp.body)
     }
 
+    method artist(UInt:D $id) {
+        self!objectify("/artists/$id", Artist)
+    }
+
+    method master-release(UInt:D $id) {
+        self!objectify("/masters/$id", MasterRelease)
+    }
+
     method release(UInt:D $id, AllowedCurrency:D $currency = $.currency) {
         self!objectify("/releases/$id?$currency", Release)
     }
 
-    multi method release-user-rating(UInt:D $id, Username $username) {
-        self!objectify("/releases/$id/rating/$username", ReleaseUserRating)
+    multi method user-release-rating(UInt:D $id, Username $username) {
+        self!objectify("/releases/$id/rating/$username", UserReleaseRating)
     }
-    multi method release-user-rating(Release:D $release, Username $username) {
-        self.release-user-rating($release.id, $username)
+    multi method user-release-rating(Release:D $release, Username $username) {
+        self.user-release-rating($release.id, $username)
+    }
+
+    multi method community-release-rating(UInt:D $id) {
+        self!objectify("/releases/$id/rating", CommunityReleaseRating)
+    }
+    multi method community-release-rating(Release:D $release) {
+        self.community-release-rating($release.id)
     }
 }
 
@@ -48,20 +64,25 @@ $default-client := Cro::HTTP::Client.new:
   );
 
 my $discogs := API::Discogs.new;
-my $release := $discogs.release(249504);
+#my $release := $discogs.release(249504);
+#dd $_ for $release.community.contributors;
+#dd $release.released;
+#dd $release.date_added;
+#dd $release.artists;
+#
+#my $user-rating := $discogs.user-release-rating($release, "memory");
+#dd $user-rating;
+#
+#my $community-rating := $discogs.community-release-rating($release);
+#dd $community-rating;
+#
+#my $master-release = $discogs.master-release(1000);
+#dd $_ for $master-release.tracklist;
 
-dd $_ for $release.community.contributors;
-dd $release.released;
-dd $release.date_added;
-dd $release.artists;
-
-my $rating := $discogs.release-user-rating($release, "memory");
-dd $rating;
-
-#dd $json<artists>[0];
-#my $artist = Artist.new($json<artists>[0]);
-#dd $artist.^methods>>.name.sort;
-#dd $artist.name;
+my $artist = $discogs.artist(108713);
+dd $artist.name;
+dd $_ for $artist.namevariations;
+dd $artist.profile;
 
 =begin pod
 

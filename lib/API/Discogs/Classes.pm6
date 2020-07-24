@@ -1,15 +1,17 @@
 use Hash2Class;
 
-our subset URL of Str where .starts-with("https://") || .starts-with("http://");
-our subset Username of Str where /^ \w+ $/;
-our subset Status of Str where "Accepted";
-our subset Price of Real;
-our subset ValidRating of Int where 1 <= $_ <= 5;
 our subset Country of Str;
 our subset Genre of Str;
+our subset Quality of Str;
+our subset Price of Real;
+our subset Status of Str where "Accepted";
+our subset Style of Str;
+our subset URL of Str where .starts-with("https://") || .starts-with("http://");
+our subset Username of Str where /^ \w+ $/;
+our subset ValidRating of Int where 1 <= $_ <= 5;
 our subset Year of UInt where $_ > 1900 && $_ <= 2100;
 
-our class Artist does Hash2Class[
+our class ArtistSummary does Hash2Class[
   anv          => Str,
   id           => UInt,
   join         => Str,
@@ -31,7 +33,7 @@ our class User does Hash2Class[
 
 our class Community does Hash2Class[
   '@contributors' => User,
-  data_quality    => Str,
+  data_quality    => Quality,
   have            => Int,
   rating          => Rating,
   status          => Status,
@@ -70,7 +72,7 @@ our class Image does Hash2Class[
 
 our class Track does Hash2Class[
   duration => Str,
-  position => Str,
+  position => UInt(Str),
   title    => Str,
   type_    => Str,
 ] { }
@@ -83,23 +85,34 @@ our class Video does Hash2Class[
   uri         => URL,
 ] { }
 
+our class UserReleaseRating does Hash2Class[
+  rating      => ValidRating,
+  release     => UInt,
+  username    => Username,
+] { }
+
+our class CommunityReleaseRating does Hash2Class[
+  rating      => Rating,
+  releasei_id => UInt,
+] { }
+
 our class Release does Hash2Class[
-  '@artists'        => Artist,
+  '@artists'        => ArtistSummary,
   '@companies'      => CatalogEntry,
-  '@extraartists'   => Artist,
+  '@extraartists'   => ArtistSummary,
   '@formats'        => Format,
   '@genres'         => Genre,
   '@identifiers'    => Identifier,
   '@images'         => Image,
   '@labels'         => CatalogEntry,
   '@series'         => CatalogEntry,
-  '@styles'         => Str,
+  '@styles'         => Style,
   '@tracklist'      => Track,
   '@videos'         => Video,
   artists_sort      => Str,
   community         => Community,
   country           => Country,
-  data_quality      => Str,
+  data_quality      => Quality,
   date_added        => DateTime(Str),
   date_changed      => DateTime(Str),
   estimated_weight  => UInt,
@@ -120,10 +133,47 @@ our class Release does Hash2Class[
   year              => Year,
 ] { }
 
-class ReleaseUserRating does Hash2Class[
-  rating      => ValidRating,
-  release     => UInt,
-  username    => Username,
+our class MasterRelease does Hash2Class[
+  '@artists'              => ArtistSummary,
+  '@genres'               => Genre,
+  '@images'               => Image,
+  '@styles'               => Style,
+  '@tracklist'            => Track,
+  '@videos'               => Video,
+  data_quality            => Quality,
+  id                      => UInt,
+  lowest_price            => Rat,
+  main_release            => UInt,
+  main_release_url        => URL,
+  most_recent_release     => UInt,
+  most_recent_release_url => URL,
+  num_for_sale            => UInt,
+  resource_url            => URL,
+  title                   => Str,
+  uri                     => URL,
+  versions_url            => URL,
+  year                    => Year,
+] { }
+
+our class Member does Hash2Class[
+  active       => Bool,
+  id           => UInt,
+  name         => Str,
+  resource_url => Str,
+] { }
+
+our class Artist does Hash2Class[
+  '@images'         => Image,
+  '@members'        => Member,
+  '@namevariations' => Str,
+  '@urls'           => URL,
+  data_quality      => Quality,
+  id                => UInt,
+  name              => Str,
+  profile           => Str,
+  releases_url      => URL,
+  resource_url      => URL,
+  uri               => URL,
 ] { }
 
 =begin pod
