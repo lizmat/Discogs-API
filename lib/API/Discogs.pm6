@@ -79,10 +79,10 @@ my $discogs := API::Discogs.new;
 #my $master-release = $discogs.master-release(1000);
 #dd $_ for $master-release.tracklist;
 
-my $artist = $discogs.artist(108713);
-dd $artist.name;
-dd $_ for $artist.namevariations;
-dd $artist.profile;
+#my $artist = $discogs.artist(108713);
+#dd $artist.name;
+#dd $_ for $artist.namevariations;
+#dd $artist.profile;
 
 =begin pod
 
