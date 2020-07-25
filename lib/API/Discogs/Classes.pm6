@@ -146,6 +146,30 @@ our class Release does Hash2Class[
   year              => Year,
 ] { }
 
+class StatsData does Hash2Class[
+  in_collection => Int,
+  in_wantlist   => Int,
+] { }
+
+class Stats does Hash2Class[
+  '%source' => StatsData,
+] { }
+
+our class ConciseRelease does Hash2Class[
+  '%stats'     => StatsData,
+  artist       => Str,
+  format       => Str,
+  id           => UInt,
+  label        => Str,
+  resource_url => URL,
+  role         => Str,
+  status       => Status,
+  thumb        => URL,
+  title        => Str,
+  type         => Str,
+  year         => Year,
+] { }
+
 our class MasterRelease does Hash2Class[
   '@artists'              => ArtistSummary,
   '@genres'               => Genre,
@@ -187,15 +211,6 @@ our class Artist does Hash2Class[
   releases_url      => URL,
   resource_url      => URL,
   uri               => URL,
-] { }
-
-class StatsData does Hash2Class[
-  in_collection => Int,
-  in_wantlist   => Int,
-] { }
-
-class Stats does Hash2Class[
-  '%source' => StatsData,
 ] { }
 
 class ReleaseVersion does Hash2Class[
@@ -245,6 +260,11 @@ class ReleaseVersions does Hash2Class[
   '@versions'      => ReleaseVersion,
   pagination       => Pagination,
 ] does PaginationURLs { }
+
+our class ArtistReleases does Hash2Class[
+  '@releases' => ConciseRelease,
+  pagination  => Pagination,
+] { }
 
 =begin pod
 
