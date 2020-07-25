@@ -155,7 +155,7 @@ our class Stats does Hash2Class[
   '%source' => StatsData,
 ] { }
 
-our class ConciseRelease does Hash2Class[
+our class ArtistRelease does Hash2Class[
   '%stats'     => StatsData,
   artist       => Str,
   format       => Str,
@@ -262,9 +262,9 @@ our class ReleaseVersions does Hash2Class[
 ] does PaginationURLs { }
 
 our class ArtistReleases does Hash2Class[
-  '@releases' => ConciseRelease,
+  '@releases' => ArtistRelease,
   pagination  => Pagination,
-] { }
+] does PaginationURLs { }
 
 our class SubLabel does Hash2Class[
   id           => Int,
@@ -286,6 +286,22 @@ our class Label does Hash2Class[
   uri          => URL,
 ] { }
 
+our class LabelRelease does Hash2Class[
+  artist       => Str,
+  catno        => Str,
+  format       => Format,
+  id           => UInt,
+  resource_url => URL,
+  status       => Status,
+  thumb        => URL,
+  title        => Str,
+  year         => UInt,
+] { }
+
+our class LabelReleases does Hash2Class[
+  '@releases' => LabelRelease,
+  pagination  => Pagination,
+] does PaginationURLs { }
 
 =begin pod
 

@@ -42,6 +42,15 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         self.GET("/labels/$id", Label)
     }
 
+    method label-releases(API::Discogs:D:
+      UInt:D $id
+    --> LabelReleases:D) {
+        self.GET(
+          "/labels/$id/releases?" ~ self!pagination(%_),
+          LabelReleases
+        )
+    }
+
     method artist(API::Discogs:D:
       UInt:D $id
     --> Artist:D) {
@@ -139,6 +148,9 @@ my $discogs := API::Discogs.new;
 #my $label = $discogs.label(1);
 #dd $label.name;
 #dd $_ for $label.sublabels;
+#
+#my $label-releases = $discogs.label-releases(1);
+#dd $_ for $label-releases.releases;
 
 =begin pod
 
