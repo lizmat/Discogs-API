@@ -146,12 +146,12 @@ our class Release does Hash2Class[
   year              => Year,
 ] { }
 
-class StatsData does Hash2Class[
+our class StatsData does Hash2Class[
   in_collection => Int,
   in_wantlist   => Int,
 ] { }
 
-class Stats does Hash2Class[
+our class Stats does Hash2Class[
   '%source' => StatsData,
 ] { }
 
@@ -213,7 +213,7 @@ our class Artist does Hash2Class[
   uri               => URL,
 ] { }
 
-class ReleaseVersion does Hash2Class[
+our class ReleaseVersion does Hash2Class[
   '@major_formats' => Str,
   '%label'         => Str,
   catno            => Str,
@@ -228,20 +228,20 @@ class ReleaseVersion does Hash2Class[
   title            => Str,
 ] { }
 
-class Value does Hash2Class[
+our class Value does Hash2Class[
   count => Int,
   title => Str,
   value => Str,
 ] { }
 
-class FilterFacet does Hash2Class[
+our class FilterFacet does Hash2Class[
   '@values'              => Value,
   allows_multiple_values => Bool,
   id                     => Str,
   title                  => Str,
 ] { }
 
-class Pagination does Hash2Class[
+our class Pagination does Hash2Class[
   '%urls'  => URL,
   items    => UInt,
   page     => UInt,
@@ -249,12 +249,12 @@ class Pagination does Hash2Class[
   per_page => UInt,
 ] { }
 
-class Filters does Hash2Class[
+our class Filters does Hash2Class[
   '%applied'   => FilterFacet,
   '%available' => UInt,
 ] { }
 
-class ReleaseVersions does Hash2Class[
+our class ReleaseVersions does Hash2Class[
   '@filter_facets' => FilterFacet,
   '@filters'       => Filters,
   '@versions'      => ReleaseVersion,
@@ -265,6 +265,27 @@ our class ArtistReleases does Hash2Class[
   '@releases' => ConciseRelease,
   pagination  => Pagination,
 ] { }
+
+our class SubLabel does Hash2Class[
+  id           => Int,
+  name         => Str,
+  resource_url => Str,
+] { }
+
+our class Label does Hash2Class[
+  '@images'    => Image,
+  '@sublabels' => SubLabel,
+  '@urls'      => URL,
+  contact_info => Str,
+  data_quality => Str,
+  id           => UInt,
+  name         => Str,
+  profile      => Str,
+  releases_url => URL,
+  resource_url => URL,
+  uri          => URL,
+] { }
+
 
 =begin pod
 

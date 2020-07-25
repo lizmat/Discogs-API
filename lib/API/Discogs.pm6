@@ -36,6 +36,12 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         $class.new(await $resp.body)
     }
 
+    method label(API::Discogs:D:
+      UInt:D $id
+    --> Label:D) {
+        self.GET("/labels/$id", Label)
+    }
+
     method artist(API::Discogs:D:
       UInt:D $id
     --> Artist:D) {
@@ -121,14 +127,18 @@ my $discogs := API::Discogs.new;
 #my $release-versions = $discogs.release-versions(1000,:2page,:2per-page);
 #dd $release-versions.next-page-url;
 #dd $_ for $release-versions(:2per-page).pagination.urls;
-
+#
 #my $artist = $discogs.artist(108713);
 #dd $artist.name;
 #dd $_ for $artist.namevariations;
 #dd $artist.profile;
-
-my $artist-releases = $discogs.artist-releases(108713);
-dd $_ for $artist-releases.releases;
+#
+#my $artist-releases = $discogs.artist-releases(108713);
+#dd $_ for $artist-releases.releases;
+#
+#my $label = $discogs.label(1);
+#dd $label.name;
+#dd $_ for $label.sublabels;
 
 =begin pod
 
