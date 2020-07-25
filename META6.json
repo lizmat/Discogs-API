@@ -4,7 +4,10 @@
     "Elizabeth Mattijsen"
   ],
   "build-depends" : [ ],
-  "depends" : [ "Cro::HTTP::Client", "Hash2Class" ],
+  "depends" : [
+    "Cro::HTTP::Client",
+    "Hash2Class"
+  ],
   "description" : "Provide basic API to Discogs",
   "license" : "Artistic-2.0",
   "name" : "API::Discogs",
@@ -15,7 +18,11 @@
   },
   "resources" : [ ],
   "source-url" : "https://github.com/lizmat/API-Discogs.git",
-  "tags" : [ "API", "JSON", "DISCOGS" ],
+  "tags" : [
+    "API",
+    "JSON",
+    "DISCOGS"
+  ],
   "test-depends" : [ ],
   "version" : "0.0.1"
 }

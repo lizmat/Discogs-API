@@ -18,7 +18,7 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     has Str $!secret is built;
 
     # main worker for creating non-asynchronous work
-    method !objectify($uri, $class) {
+    method GET($uri, $class) {
         my $resp := await $.client.get(
           $!secret && $.key
             ?? ($uri, headers => (
@@ -30,29 +30,32 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     }
 
     method artist(UInt:D $id --> Artist:D) {
-        self!objectify("/artists/$id", Artist)
+        self.GET("/artists/$id", Artist)
     }
 
     method master-release(UInt:D $id --> MasterRelease:D) {
-        self!objectify("/masters/$id", MasterRelease)
+        self.GET("/masters/$id", MasterRelease)
     }
 
     method release-versions(
       UInt:D $id, UInt:D :$page = 1, UInt:D :$per-page = $.per-page
     --> ReleaseVersions:D) {
-        self!objectify("/masters/$id/versions?$page,$per-page", ReleaseVersions)
+        self.GET(
+          "/masters/$id/versions?page=$page&perpage=$per-page",
+          ReleaseVersions
+        )
     }
 
     method release(
       UInt:D $id, AllowedCurrency:D :$currency = $.currency
     --> Release) {
-        self!objectify("/releases/$id?$currency", Release)
+        self.GET("/releases/$id?$currency", Release)
     }
 
     multi method user-release-rating(
       UInt:D $id, Username $username
     --> UserReleaseRating:D) {
-        self!objectify("/releases/$id/rating/$username", UserReleaseRating)
+        self.GET("/releases/$id/rating/$username", UserReleaseRating)
     }
     multi method user-release-rating(
       Release:D $release, Username $username
@@ -63,7 +66,7 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     multi method community-release-rating(
       UInt:D $id
     --> CommunityReleaseRating:D) {
-        self!objectify("/releases/$id/rating", CommunityReleaseRating)
+        self.GET("/releases/$id/rating", CommunityReleaseRating)
     }
     multi method community-release-rating(
       Release:D $release
@@ -95,8 +98,9 @@ my $discogs := API::Discogs.new;
 #my $master-release = $discogs.master-release(1000);
 #dd $_ for $master-release.tracklist;
 #
-#my $release-versions = $discogs.release-versions(1000);
-#dd $_ for $release-versions.versions;
+#my $release-versions = $discogs.release-versions(1000,:2per-page);
+#dd $release-versions.pagination;
+#dd $_ for $release-versions(:2per-page).pagination.urls;
 
 #my $artist = $discogs.artist(108713);
 #dd $artist.name;
