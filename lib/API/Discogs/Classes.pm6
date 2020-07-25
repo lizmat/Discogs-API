@@ -1,5 +1,7 @@
 use Hash2Class;
 
+#--------------- useful subtypes -----------------------------------------------
+
 our subset Country of Str;
 our subset Genre of Str;
 our subset Quality of Str;
@@ -10,6 +12,17 @@ our subset URL of Str where .starts-with("https://") || .starts-with("http://");
 our subset Username of Str where /^ \w+ $/;
 our subset ValidRating of Int where 1 <= $_ <= 5;
 our subset Year of UInt where $_ > 1900 && $_ <= 2100;
+
+#--------------- useful roles --------------------------------------------------
+
+my role PaginationURLs {
+    method first-page-url(::?CLASS:D:)    { $.pagination.urls<first> // Nil }
+    method next-page-url(::?CLASS:D:)     { $.pagination.urls<next>  // Nil }
+    method previous-page-url(::?CLASS:D:) { $.pagination.urls<prev>  // Nil }
+    method last-page-url(::?CLASS:D:)     { $.pagination.urls<first> // Nil }
+}
+
+#--------------- classes derived from the JSON API -----------------------------
 
 our class ArtistSummary does Hash2Class[
   anv          => Str,
@@ -231,7 +244,7 @@ class ReleaseVersions does Hash2Class[
   '@filters'       => Filters,
   '@versions'      => ReleaseVersion,
   pagination       => Pagination,
-] { }
+] does PaginationURLs { }
 
 =begin pod
 

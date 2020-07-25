@@ -17,8 +17,15 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     has Str $.key;
     has Str $!secret is built;
 
+    # helper method for setting pagination parameters
+    method !pagination(%nameds --> Str:D) {
+        my UInt $page     := %nameds<page>     // 1;
+        my UInt $per-page := %nameds<per-page> // $.per-page;
+        "page=$page&per_page=$per-page"
+    }
+
     # main worker for creating non-asynchronous work
-    method GET($uri, $class) {
+    method GET(API::Discogs:D: $uri, $class) {
         my $resp := await $.client.get(
           $!secret && $.key
             ?? ($uri, headers => (
@@ -29,46 +36,50 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         $class.new(await $resp.body)
     }
 
-    method artist(UInt:D $id --> Artist:D) {
+    method artist(API::Discogs:D:
+      UInt:D $id
+    --> Artist:D) {
         self.GET("/artists/$id", Artist)
     }
 
-    method master-release(UInt:D $id --> MasterRelease:D) {
+    method master-release(API::Discogs:D:
+      UInt:D $id
+    --> MasterRelease:D) {
         self.GET("/masters/$id", MasterRelease)
     }
 
-    method release-versions(
-      UInt:D $id, UInt:D :$page = 1, UInt:D :$per-page = $.per-page
+    method release-versions(API::Discogs:D:
+      UInt:D $id
     --> ReleaseVersions:D) {
         self.GET(
-          "/masters/$id/versions?page=$page&perpage=$per-page",
+          "/masters/$id/versions?" ~ self!pagination(%_),
           ReleaseVersions
         )
     }
 
-    method release(
+    method release(API::Discogs:D:
       UInt:D $id, AllowedCurrency:D :$currency = $.currency
     --> Release) {
         self.GET("/releases/$id?$currency", Release)
     }
 
-    multi method user-release-rating(
+    multi method user-release-rating(API::Discogs:D:
       UInt:D $id, Username $username
     --> UserReleaseRating:D) {
         self.GET("/releases/$id/rating/$username", UserReleaseRating)
     }
-    multi method user-release-rating(
+    multi method user-release-rating(API::Discogs:D:
       Release:D $release, Username $username
     --> UserReleaseRating:D) {
         self.user-release-rating($release.id, $username)
     }
 
-    multi method community-release-rating(
+    multi method community-release-rating(API::Discogs:D:
       UInt:D $id
     --> CommunityReleaseRating:D) {
         self.GET("/releases/$id/rating", CommunityReleaseRating)
     }
-    multi method community-release-rating(
+    multi method community-release-rating(API::Discogs:D:
       Release:D $release
     --> CommunityReleaseRating:D) {
         self.community-release-rating($release.id)
@@ -98,8 +109,8 @@ my $discogs := API::Discogs.new;
 #my $master-release = $discogs.master-release(1000);
 #dd $_ for $master-release.tracklist;
 #
-#my $release-versions = $discogs.release-versions(1000,:2per-page);
-#dd $release-versions.pagination;
+#my $release-versions = $discogs.release-versions(1000,:2page,:2per-page);
+#dd $release-versions.next-page-url;
 #dd $_ for $release-versions(:2per-page).pagination.urls;
 
 #my $artist = $discogs.artist(108713);
