@@ -176,6 +176,63 @@ our class Artist does Hash2Class[
   uri               => URL,
 ] { }
 
+class StatsData does Hash2Class[
+  in_collection => Int,
+  in_wantlist   => Int,
+] { }
+
+class Stats does Hash2Class[
+  '%source' => StatsData,
+] { }
+
+class ReleaseVersion does Hash2Class[
+  '@major_formats' => Str,
+  '%label'         => Str,
+  catno            => Str,
+  country          => Country,
+  format           => Str,
+  id               => UInt,
+  released         => Str,
+  resource_url     => URL,
+  stats            => Stats,
+  status           => Status,
+  thumb            => URL,
+  title            => Str,
+] { }
+
+class Value does Hash2Class[
+  count => Int,
+  title => Str,
+  value => Str,
+] { }
+
+class FilterFacet does Hash2Class[
+  '@values'              => Value,
+  allows_multiple_values => Bool,
+  id                     => Str,
+  title                  => Str,
+] { }
+
+class Pagination does Hash2Class[
+  '%urls'  => URL,
+  items    => UInt,
+  page     => UInt,
+  pages    => UInt,
+  per_page => UInt,
+] { }
+
+class Filters does Hash2Class[
+  '%applied'   => FilterFacet,
+  '%available' => UInt,
+] { }
+
+class ReleaseVersions does Hash2Class[
+  '@filter_facets' => FilterFacet,
+  '@filters'       => Filters,
+  '@versions'      => ReleaseVersion,
+  pagination       => Pagination,
+] { }
+
 =begin pod
 
 =head1 NAME

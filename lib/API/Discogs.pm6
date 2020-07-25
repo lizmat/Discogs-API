@@ -29,29 +29,45 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         $class.new(await $resp.body)
     }
 
-    method artist(UInt:D $id) {
+    method artist(UInt:D $id --> Artist:D) {
         self!objectify("/artists/$id", Artist)
     }
 
-    method master-release(UInt:D $id) {
+    method master-release(UInt:D $id --> MasterRelease:D) {
         self!objectify("/masters/$id", MasterRelease)
     }
 
-    method release(UInt:D $id, AllowedCurrency:D $currency = $.currency) {
+    method release-versions(
+      UInt:D $id, UInt:D :$page = 1, UInt:D :$per-page = $.per-page
+    --> ReleaseVersions:D) {
+        self!objectify("/masters/$id/versions?$page,$per-page", ReleaseVersions)
+    }
+
+    method release(
+      UInt:D $id, AllowedCurrency:D :$currency = $.currency
+    --> Release) {
         self!objectify("/releases/$id?$currency", Release)
     }
 
-    multi method user-release-rating(UInt:D $id, Username $username) {
+    multi method user-release-rating(
+      UInt:D $id, Username $username
+    --> UserReleaseRating:D) {
         self!objectify("/releases/$id/rating/$username", UserReleaseRating)
     }
-    multi method user-release-rating(Release:D $release, Username $username) {
+    multi method user-release-rating(
+      Release:D $release, Username $username
+    --> UserReleaseRating:D) {
         self.user-release-rating($release.id, $username)
     }
 
-    multi method community-release-rating(UInt:D $id) {
+    multi method community-release-rating(
+      UInt:D $id
+    --> CommunityReleaseRating:D) {
         self!objectify("/releases/$id/rating", CommunityReleaseRating)
     }
-    multi method community-release-rating(Release:D $release) {
+    multi method community-release-rating(
+      Release:D $release
+    --> CommunityReleaseRating:D) {
         self.community-release-rating($release.id)
     }
 }
@@ -78,6 +94,9 @@ my $discogs := API::Discogs.new;
 #
 #my $master-release = $discogs.master-release(1000);
 #dd $_ for $master-release.tracklist;
+#
+#my $release-versions = $discogs.release-versions(1000);
+#dd $_ for $release-versions.versions;
 
 #my $artist = $discogs.artist(108713);
 #dd $artist.name;
