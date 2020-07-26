@@ -35,7 +35,7 @@ subset Year of UInt where $_ > 1900 && $_ <= 2100;
 
 #--------------- useful roles --------------------------------------------------
 
-my role PaginationURLs {
+my role PaginationShortcuts {
     method first-page-url(::?CLASS:D:)    { $.pagination.urls<first> // Nil }
     method next-page-url(::?CLASS:D:)     { $.pagination.urls<next>  // Nil }
     method previous-page-url(::?CLASS:D:) { $.pagination.urls<prev>  // Nil }
@@ -133,10 +133,6 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       uri         => URL,
     ] { }
 
-    our class Stats does Hash2Class[
-      '%source' => StatsData,
-    ] { }
-
     our class Member does Hash2Class[
       active       => Bool,
       id           => UInt,
@@ -165,6 +161,10 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class StatsData does Hash2Class[
       in_collection => Int,
       in_wantlist   => Int,
+    ] { }
+
+    our class Stats does Hash2Class[
+      '%source' => StatsData,
     ] { }
 
     our class Pagination does Hash2Class[
@@ -326,7 +326,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       '@filters'       => Filters,
       '@versions'      => ReleaseVersion,
       pagination       => Pagination,
-    ] does PaginationURLs { }
+    ] does PaginationShortcuts { }
 
     method release-versions(API::Discogs:D:
       UInt:D $id
@@ -382,7 +382,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class LabelReleases does Hash2Class[
       '@releases' => LabelRelease,
       pagination  => Pagination,
-    ] does PaginationURLs { }
+    ] does PaginationShortcuts { }
 
     method label-releases(API::Discogs:D:
       UInt:D $id
@@ -435,7 +435,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class ArtistReleases does Hash2Class[
       '@releases' => ArtistRelease,
       pagination  => Pagination,
-    ] does PaginationURLs { }
+    ] does PaginationShortcuts { }
 
     method artist-releases(API::Discogs:D:
       UInt:D $id
@@ -464,7 +464,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class SearchResults does Hash2Class[
       '@results' => SearchResult,
       pagination => Pagination,
-    ] does PaginationURLs { }
+    ] does PaginationShortcuts { }
 
     method search(API::Discogs:D: *%_ --> SearchResults:D) {
         my str @params = self!pagination(%_);
