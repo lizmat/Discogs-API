@@ -69,7 +69,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       tracks       => Str,
     ] { }
 
-    our class Rating does Hash2Class[
+    our class Rating does Hash2Class[ # OK
       average => Numeric,
       count   => Int,
     ] { }
@@ -118,14 +118,14 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       width        => UInt,
     ] { }
 
-    our class Track does Hash2Class[
+    our class Track does Hash2Class[ # OK
       duration => Str,
       position => UInt(Str),
       title    => Str,
-      type_    => Str,
+      type_    => { type => Str, name => 'type' },
     ] { }
 
-    our class Video does Hash2Class[
+    our class Video does Hash2Class[ # OK
       description => Str,
       duration    => Int,
       embed       => Bool,
@@ -394,7 +394,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the information about an artist -------------------------
 
-    our class Artist does Hash2Class[
+    our class Artist does Hash2Class[ # OK
       '@images'         => Image,
       '@members'        => Member,
       '@namevariations' => Str,
@@ -1005,6 +1005,53 @@ A string with the name of this sublabel.
 
 The URL to get the full L<Label> information of this C<SubLabel> using
 the Discogs API.
+
+=head2 API::Discogs::Track
+
+The information about a track on a release, usually created automatically
+as part of a L<Release> object.
+
+=item duration
+
+A string indicating the duration of this track, usually as "mm:ss".
+
+=item position
+
+A string indication the position of this track, "A" side or "B" side.
+
+=item title
+
+A string containing the title of this track.
+
+=item type
+
+A string to indicate the type of track, usually "track".
+
+=head2 API::Discogs::Video
+
+The information about a video, usually created automatically as part
+of a L<Release> object.
+
+=item description
+
+A string containing the description of this C<Video> object.
+
+=item duration
+
+A string indicating the duration of the video, usually as "mm:ss".
+
+=item embed
+
+A Bool indicating whether this video can be embedded.
+
+=item title
+
+A string containing the title (usually "artist - title") of this
+C<Video> object.
+
+=item uri
+
+The URL of the video, usually a link to a YouTube video.
 
 =head1 AUTHOR
 
