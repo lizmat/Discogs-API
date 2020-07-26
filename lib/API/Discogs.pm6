@@ -50,8 +50,8 @@ my role PaginationShortcuts {
 #--------------- actual class and its attributes -------------------------------
 
 our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
-    has AllowedCurrency $.currency = %*ENV<DISCOGS_CURRENCY> // @currencies[0];
     has Cro::HTTP::Client $.client = $default-client;
+    has AllowedCurrency $.currency = %*ENV<DISCOGS_CURRENCY> // @currencies[0];
     has UInt            $.per-page = 50;
     has Str $!token  is built = %*ENV<DISCOGS_TOKEN>;
     has Str $.key;
@@ -504,6 +504,9 @@ API::Discogs - Provide basic API to Discogs
 =begin code :lang<raku>
 
 use API::Discogs;
+my $discogs = Discogs.new;
+
+my $release = $discogs.release(249504);
 
 =end code
 
@@ -512,12 +515,304 @@ use API::Discogs;
 API::Discogs provides a Raku library with access to the L<Discogs|https://discogs.com>
 data and functions.
 
+=head1 METHODS
+
+=head2 new
+
+=begin code :lang<raku>
+
+my $discogs = Discogs.new(
+  client   => $client,     # Cro::HTTP::Client compatible, optional
+  token    => "xfhgh1624", # Discogs access token, default: none
+  key      => "kahgjkhdg", # Discogs access key, default: none
+  secret   => "454215642", # Discogs access secret, default: none
+  currency => "EUR",       # default: "USD"
+  per-page => 10,          # default: 50
+;
+
+=end code
+
+Create an object to access the services that the Discogs API has to offer.
+
+=item client - a Cro::HTTP::Client compatible client
+
+One will be provided if not specified.
+
+=item token - Discogs Access Token
+
+A token needed to access certain parts of the Discogs API.  See
+L<https://www.discogs.com/settings/developers> for more information.
+Defaults to whatever is specified with the DISCOGS_TOKEN environment
+variable.
+
+=item key - Discogs Access Key
+
+A string needed to access certain parts of the Discogs API.  See
+L<https://www.discogs.com/developers#page:authentication> for more
+information.
+
+=item secret - Discogs Access Secret
+
+A string needed to access certain parts of the Discogs API.  See
+L<https://www.discogs.com/developers#page:authentication> for more
+information.
+
+=head2 artist
+
+=begin code :lang<raku>
+
+my $artist = $discogs.artist(108713);
+
+=end code
+
+Fetch the information for the given artist ID and return that in
+a L<API::Discogs::Artist> object.
+
+=head1 ADDITIONAL CLASSES
+
+=head2 API::Discogs::Artist
+
+=item data_quality
+
+String indicating the quality of the data.
+
+=item id
+
+The artist ID.
+
+=item images
+
+A list of L<Image> objects for this artist.
+
+=item members
+
+A list of L<Member> objects of this artist.
+
+=item name
+
+String with the main name of the artist.
+
+=item namevariations
+
+A list of strings with alternate names / spellings of the artist.
+
+=item profile
+
+A string with a profile of the artist.
+
+=item releases_url
+
+The URL to fetch all of the releases of this Artist using the Discogs API.
+
+=item resource_url
+
+The URL to fetch this object using the Discogs API.
+
+=item uri
+
+The URL to access information about this artist on the Discogs website.
+
+=item urls
+
+A list of URLs associated with this artist.
+
+=head2 API::Discogs::Image
+
+=item height
+
+The height of the image in pixels.
+
+=item resource_url
+
+The URL to access this image on the Discogs image website.
+
+=item type
+
+String with the type for this image: either "primary" or "secondary".
+
+=item uri
+
+The URL to access this image on the Discogs image website.
+
+=item uri150
+
+The URL to access a 150x150 pixel version of the  image on the Discogs
+image website.
+
+=item width
+
+The width of the image in pixels.
+
+=head2 API::Discogs::Member
+
+=item active
+
+A Boolean indicating whether this member is still active with the
+L<API::Discogs::Artist> it is associated with.
+
+=item id
+
+The ID of this member as a separate L<API::Discogs::Artist>.
+
+=item name
+
+The name of this member.
+
+=item resource_url
+
+The URL to fetch L<API::Discogs::Artist> object of this member using
+the Discogs API.
+
+=head2 API::Discogs::Release
+
+=item artists
+
+A list of L<ArtistSummary> objects for this release.
+
+=item artists_sort
+
+A string with the artists, sorted.
+
+=item community
+
+The L<Community> object with all of the Discogs community information
+associated with this release.
+
+=item companies
+
+A list of L<CatalogEntry> objects of entities that had something to do
+with this release.
+
+=item country
+
+A string with the country of origin of this release.
+
+=item data_quality
+
+String indicating the quality of the data.
+
+=item date_added
+
+A C<Date> object of the date this release was added to the Discogs system.
+
+=item date_changed
+
+A C<Date> object of the date this release was last changed in the Discogs
+system.
+
+=item estimated_weight
+
+An integer value to indicate the weight of this release compared to other
+release in the L<MasterRelease>.
+
+=item extraartists
+
+A list of L<ArtistSummary> objects for additional artists in this release.
+
+=item format_quantity
+
+An integer value for the number of formats available for this release.
+
+=item formats
+
+A list of L<Format> objects that are available for this release.
+
+=item genres
+
+A list of strings describing the genres of this release.
+
+=item id
+
+The integer value that identifies this release.
+
+=item identifiers
+
+A list of L<Identifier> objects for this release.
+
+=item images
+
+A list of L<Image> objects for this release.
+
+=item labels
+
+A list of L<CatalogEntry> objects that serve as a "label"  for this release.
+
+=item lowest_price
+
+A real value indicating the lowest price if this release is available in the
+Discogs Marketplace.
+
+=item master_id
+
+The integer value of the L<MasterRelease> id of this release.
+
+=item master_url
+
+The URL to fetch the master release of this release using the Discogs API.
+
+=item notes
+
+A string with additional notes about this release.
+
+=item num_for_sale
+
+An integer value indicating the number of copies for sale for this release
+on the Discogs Marketplace.
+
+=item release_formatted
+
+A string with a human readable form of the date this release was released.
+
+=item released
+
+A string with a machine readable for of the date this release was released.
+
+=item resource_url
+
+The URL to fetch this L<API::Discogs::Release> object using the Discogs API.
+
+=item series
+
+A list of L<CatalogEntry> objects of which this release is a part of.
+
+=item status
+
+A string indicating the status of the information of this release.
+
+=item styles
+
+A list of strings indicating the styles of this release.
+
+=item thumb
+
+A URL for a thumbnail image for this release.
+
+=item title
+
+A string with the title of this release.
+
+=item tracklist
+
+A list of L<Track> objects of this release.
+
+=item uri
+
+The URL to access this release on the Discogs image website.
+
+=item videos
+
+A list of L<Video> objects associated with this release.
+
+=item year
+
+An integer value of the year this release was released.
+
 =head1 AUTHOR
 
 Elizabeth Mattijsen <liz@wenzperl.nl>
 
-Source can be located at: https://github.com/lizmat/API-Discogs . Comments and
-Pull Requests are welcome.
+Source can be located at: https://github.com/lizmat/API-Discogs . Comments
+and Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
