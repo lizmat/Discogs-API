@@ -81,7 +81,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
     our class Community does Hash2Class[ # OK
       '@contributors' => User,
-      data_quality    => Quality,
+      data_quality    => { type => Quality, name => 'data-quality' },
       have            => Int,
       rating          => Rating,
       status          => Status,
@@ -91,8 +91,8 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
     our class CatalogEntry does Hash2Class[
       catno            => Str,
-      entity_type      => Int,
-      entity_type_name => Str,
+      entity_type      => { type => Int, name => 'entity_type' },
+      entity_type_name => { type => Str, name => 'entity-type-name' },
       id               => UInt,
       name             => Str,
       resource_url => { type => URL, name => 'resource-url' },
@@ -190,28 +190,29 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       '@styles'         => Style,
       '@tracklist'      => Track,
       '@videos'         => Video,
-      artists_sort      => Str,
+      artists_sort      => { type => Str, name => 'artists-sort' },
       community         => Community,
       country           => Country,
-      data_quality      => Quality,
-      date_added        => DateTime(Str),
-      date_changed      => DateTime(Str),
-      estimated_weight  => UInt,
-      format_quantity   => UInt,
+      data_quality      => { type => Quality, name => 'data-quality' },
+      date_added        => { type => DateTime(Str), name => 'date-added' },
+      date_changed      => { type => DateTime(Str), name => 'date-changed' },
+      estimated_weight  => { type => UInt, name => 'estimated-weight' },
+      format_quantity   => { type => UInt, name => 'format-quantity' },
       id                => UInt,
-      lowest_price      => Price,
-      master_id         => UInt,
-      master_url        => URL,
+      lowest_price      => { type => Price, name => 'lowest-price' },
+      master_id         => { type => UInt, name => 'master-id' },
+      master_url        => { type => URL, name => 'master-url' },
       notes             => Str,
-      num_for_sale      => UInt,
+      num_for_sale      => { type => UInt, name => 'num-for-sale' },
       released          => Str,
-      release_formatted => Str,
+      release_formatted => { type => Str, name => 'release-formatted' },
       resource_url      => { type => URL, name => 'resource-url' },
     ] { }
 
     our class FilterFacet does Hash2Class[
       '@values'              => Value,
-      allows_multiple_values => Bool,
+      allows_multiple_values => { type => Bool,
+                                  name => 'allows-multiple-values' },
       id                     => Str,
       title                  => Str,
     ] { }
@@ -222,8 +223,8 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     ] { }
 
     our class StatsData does Hash2Class[
-      in_collection => Int,
-      in_wantlist   => Int,
+      in_collection => { type => Int, name => 'in-collection' },
+      in_wantlist   => { type => Int, name => 'in-wantlist' },
     ] { }
 
     our class Stats does Hash2Class[
@@ -237,8 +238,8 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     ] { }
 
     our class CommunityReleaseRating does Hash2Class[
-      rating      => Rating,
-      releasei_id => UInt,
+      rating     => Rating,
+      release_id => { type => UInt, name => 'release-id' },
     ] { }
 
     multi method user-release-rating(API::Discogs:D:
@@ -272,18 +273,20 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       '@styles'               => Style,
       '@tracklist'            => Track,
       '@videos'               => Video,
-      data_quality            => Quality,
+      data_quality            => { type => Quality, name => 'data-quality' },
       id                      => UInt,
-      lowest_price            => Rat,
-      main_release            => UInt,
-      main_release_url        => URL,
-      most_recent_release     => UInt,
-      most_recent_release_url => URL,
-      num_for_sale            => UInt,
+      lowest_price            => { type => Price, name => 'lowest-price' },
+      main_release            => { type => UInt, name => 'main-release' },
+      main_release_url        => { type => URL, name => 'main-release-url' },
+      most_recent_release     => { type => UInt,
+                                   name => 'most-recent-release' },
+      most_recent_release_url => { type => URL,
+                                   name => 'most-recent-release-url' },
+      num_for_sale            => { type => UInt, name => 'num-for-sale' },
       resource_url            => { type => URL, name => 'resource-url' },
       title                   => Str,
       uri                     => URL,
-      versions_url            => URL,
+      versions_url            => { type => URL, name => 'versions-url' },
       year                    => Year,
     ] { }
 
@@ -296,7 +299,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 #-------------- getting the versions of a release -------------------------------
 
     our class ReleaseVersion does Hash2Class[
-      '@major_formats' => Str,
+      '@major_formats' => { type => Str, name => 'major-formats' },
       '%label'         => Str,
       catno            => Str,
       country          => Country,
@@ -311,7 +314,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     ] { }
 
     our class ReleaseVersions does Hash2Class[
-      '@filter_facets' => FilterFacet,
+      '@filter_facets' => { type => FilterFacet, name => 'filter-facets' },
       '@filters'       => Filters,
       '@versions'      => ReleaseVersion,
       pagination       => Pagination,
@@ -338,12 +341,12 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       '@images'    => Image,
       '@sublabels' => SubLabel,
       '@urls'      => URL,
-      contact_info => Str,
-      data_quality => Str,
+      contact_info => { type => Str, name => 'contact-info' },
+      data_quality => { type => Quality, name => 'data-quality' },
       id           => UInt,
       name         => Str,
       profile      => Str,
-      releases_url => URL,
+      releases_url => { type => URL, name => 'releases-url' },
       resource_url => { type => URL, name => 'resource-url' },
       uri          => URL,
     ] { }
@@ -389,11 +392,11 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       '@members'        => Member,
       '@namevariations' => Str,
       '@urls'           => URL,
-      data_quality      => Quality,
+      data_quality      => { type => Quality, name => 'data-quality' },
       id                => UInt,
       name              => Str,
       profile           => Str,
-      releases_url      => URL,
+      releases_url      => { type => URL, name => 'releases-url' },
       resource_url      => { type => URL, name => 'resource-url' },
       uri               => URL,
     ] { }
@@ -440,14 +443,14 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class SearchResult does Hash2Class[
       cover_image  => URL,
       id           => UInt,
-      master_id    => UInt,
-      master_url   => URL,
+      master_id    => { type => UInt, name => 'master-id' },
+      master_url   => { type => URL, name => 'master-url' },
       resource_url => { type => URL, name => 'resource-url' },
       thumb        => URL,
       title        => Str,
       type         => Str,
       uri          => URL,
-      user_data    => StatsData,
+      user_data    => { type => StatsData, name => 'user-data' },
     ] { }
 
     our class SearchResults does Hash2Class[
@@ -563,7 +566,7 @@ In alphatical order:
 
 =head2 API::Discogs::Artist
 
-=item data_quality
+=item data-quality
 
 String indicating the quality of the data.
 
@@ -591,7 +594,7 @@ A list of strings with alternate names / spellings of the artist.
 
 A string with a profile of the artist.
 
-=item releases_url
+=item releases-url
 
 The URL to fetch all of the releases of this Artist using the Discogs API.
 
@@ -648,7 +651,7 @@ the L<Release> object, as these are also provided as shortcuts.
 A list of L<User> objects of contributors to the community information
 of this release.
 
-=item data_quality
+=item data-quality
 
 A string describing the quality of the data of this release.
 
@@ -707,11 +710,11 @@ location, or other entity involved with L<Artist>s and L<Release>s.
 Labels were recently expanded in scope to include things that aren't
 labels – the name is an artifact of this history.
 
-=item contact_info
+=item contact-info
 
 A string with contact information for this label.
 
-=item data_quality
+=item data-quality
 
 A string describing the quality of the data of this label.
 
@@ -731,7 +734,7 @@ A string with the name of this label.
 
 A string with a profile about this label.
 
-=item releases_url
+=item releases-url
 
 A URL to retrieve all the L<Release> objects associated with this
 label using the Discogs API.
@@ -778,7 +781,7 @@ the Discogs API.
 
 A list of L<ArtistSummary> objects for this release.
 
-=item artists_sort
+=item artists-sort
 
 A string with the artists, sorted.
 
@@ -801,20 +804,20 @@ of this release.
 
 A string with the country of origin of this release.
 
-=item data_quality
+=item data-quality
 
 String indicating the quality of the data.
 
-=item date_added
+=item date-added
 
 A C<Date> object of the date this release was added to the Discogs system.
 
-=item date_changed
+=item date-changed
 
 A C<Date> object of the date this release was last changed in the Discogs
 system.
 
-=item estimated_weight
+=item estimated-weight
 
 An integer value to indicate the weight of this release compared to other
 release in the L<MasterRelease>.
@@ -823,7 +826,7 @@ release in the L<MasterRelease>.
 
 A list of L<ArtistSummary> objects for additional artists in this release.
 
-=item format_quantity
+=item format-quantity
 
 An integer value for the number of formats available for this release.
 
@@ -855,16 +858,16 @@ A list of L<Image> objects for this release.
 
 A list of L<CatalogEntry> objects that serve as a "label"  for this release.
 
-=item lowest_price
+=item lowest-price
 
 A real value indicating the lowest price if this release is available in the
 Discogs Marketplace.
 
-=item master_id
+=item master-id
 
 The integer value of the L<MasterRelease> id of this release.
 
-=item master_url
+=item master-url
 
 The URL to fetch the master release of this release using the Discogs API.
 
@@ -872,7 +875,7 @@ The URL to fetch the master release of this release using the Discogs API.
 
 A string with additional notes about this release.
 
-=item num_for_sale
+=item num-for-sale
 
 An integer value indicating the number of copies for sale for this release
 on the Discogs Marketplace.
@@ -882,7 +885,7 @@ on the Discogs Marketplace.
 A rational number indicating the rating the members of the community
 have given this release.
 
-=item release_formatted
+=item release-formatted
 
 A string with a human readable form of the date this release was released.
 
