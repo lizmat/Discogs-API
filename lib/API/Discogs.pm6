@@ -59,12 +59,12 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #--------------- supporting classes derived from the JSON API ------------------
 
-    our class ArtistSummary does Hash2Class[
+    our class ArtistSummary does Hash2Class[ # OK
       anv          => Str,
       id           => UInt,
       join         => Str,
       name         => Str,
-      resource_url => URL,
+      resource_url => { type => URL, name => "resource-url" },
       role         => Str,
       tracks       => Str,
     ] { }
@@ -75,11 +75,11 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     ] { }
 
     our class User does Hash2Class[
-      resource_url => URL,
+      resource_url => { type => URL, name => 'resource-url' },
       username     => Username,
     ] { }
 
-    our class Community does Hash2Class[
+    our class Community does Hash2Class[ # OK
       '@contributors' => User,
       data_quality    => Quality,
       have            => Int,
@@ -95,7 +95,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       entity_type_name => Str,
       id               => UInt,
       name             => Str,
-      resource_url     => URL,
+      resource_url => { type => URL, name => 'resource-url' },
     ] { }
 
     our class Format does Hash2Class[
@@ -109,9 +109,9 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       value => Str,
     ] { }
 
-    our class Image does Hash2Class[
+    our class Image does Hash2Class[ # OK
       height       => UInt,
-      resource_url => URL,
+      resource_url => { type => URL, name => 'resource-url' },
       type         => Str,
       uri          => URL,
       uri150       => URL,
@@ -133,11 +133,11 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       uri         => URL,
     ] { }
 
-    our class Member does Hash2Class[
+    our class Member does Hash2Class[ # OK
       active       => Bool,
       id           => UInt,
       name         => Str,
-      resource_url => Str,
+      resource_url => { type => URL, name => 'resource-url' },
     ] { }
 
     our class Value does Hash2Class[
@@ -146,33 +146,12 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       value => Str,
     ] { }
 
-    our class FilterFacet does Hash2Class[
-      '@values'              => Value,
-      allows_multiple_values => Bool,
-      id                     => Str,
-      title                  => Str,
-    ] { }
-
-    our class Filters does Hash2Class[
-      '%applied'   => FilterFacet,
-      '%available' => UInt,
-    ] { }
-
-    our class StatsData does Hash2Class[
-      in_collection => Int,
-      in_wantlist   => Int,
-    ] { }
-
-    our class Stats does Hash2Class[
-      '%source' => StatsData,
-    ] { }
-
-    our class Pagination does Hash2Class[
+    our class Pagination does Hash2Class[ # OK
       '%urls'  => URL,
       items    => UInt,
       page     => UInt,
       pages    => UInt,
-      per_page => UInt,
+      per_page => { type => UInt, name => 'per-page' },
     ] { }
 
 #--------------- the specific methods one can call -----------------------------
@@ -227,19 +206,29 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       num_for_sale      => UInt,
       released          => Str,
       release_formatted => Str,
-      resource_url      => URL,
-      status            => Status,
-      thumb             => URL,
-      title             => Str,
-      uri               => URL,
-      year              => Year,
+      resource_url      => { type => URL, name => 'resource-url' },
     ] { }
 
-    method release(API::Discogs:D:
-      UInt:D $id, AllowedCurrency:D :$currency = $.currency
-    --> Release) {
-        self.GET("/releases/$id?$currency", Release)
-    }
+    our class FilterFacet does Hash2Class[
+      '@values'              => Value,
+      allows_multiple_values => Bool,
+      id                     => Str,
+      title                  => Str,
+    ] { }
+
+    our class Filters does Hash2Class[
+      '%applied'   => FilterFacet,
+      '%available' => UInt,
+    ] { }
+
+    our class StatsData does Hash2Class[
+      in_collection => Int,
+      in_wantlist   => Int,
+    ] { }
+
+    our class Stats does Hash2Class[
+      '%source' => StatsData,
+    ] { }
 
     our class UserReleaseRating does Hash2Class[
       rating      => ValidRating,
@@ -291,7 +280,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       most_recent_release     => UInt,
       most_recent_release_url => URL,
       num_for_sale            => UInt,
-      resource_url            => URL,
+      resource_url            => { type => URL, name => 'resource-url' },
       title                   => Str,
       uri                     => URL,
       versions_url            => URL,
@@ -314,7 +303,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       format           => Str,
       id               => UInt,
       released         => Str,
-      resource_url     => URL,
+      resource_url     => { type => URL, name => 'resource-url' },
       stats            => Stats,
       status           => Status,
       thumb            => URL,
@@ -339,13 +328,13 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the information of a label ------------------------------
 
-    our class SubLabel does Hash2Class[
+    our class SubLabel does Hash2Class[ # OK
       id           => UInt,
       name         => Str,
-      resource_url => URL,
+      resource_url => { type => URL, name => 'resource-url' },
     ] { }
 
-    our class Label does Hash2Class[
+    our class Label does Hash2Class[ # OK
       '@images'    => Image,
       '@sublabels' => SubLabel,
       '@urls'      => URL,
@@ -355,7 +344,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       name         => Str,
       profile      => Str,
       releases_url => URL,
-      resource_url => URL,
+      resource_url => { type => URL, name => 'resource-url' },
       uri          => URL,
     ] { }
 
@@ -372,7 +361,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       catno        => Str,
       format       => Format,
       id           => UInt,
-      resource_url => URL,
+      resource_url => { type => URL, name => 'resource-url' },
       status       => Status,
       thumb        => URL,
       title        => Str,
@@ -405,7 +394,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       name              => Str,
       profile           => Str,
       releases_url      => URL,
-      resource_url      => URL,
+      resource_url      => { type => URL, name => 'resource-url' },
       uri               => URL,
     ] { }
 
@@ -423,7 +412,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       format       => Str,
       id           => UInt,
       label        => Str,
-      resource_url => URL,
+      resource_url => { type => URL, name => 'resource-url' },
       role         => Str,
       status       => Status,
       thumb        => URL,
@@ -453,7 +442,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       id           => UInt,
       master_id    => UInt,
       master_url   => URL,
-      resource_url => URL,
+      resource_url => { type => URL, name => 'resource-url' },
       thumb        => URL,
       title        => Str,
       type         => Str,
@@ -570,6 +559,8 @@ a L<API::Discogs::Artist> object.
 
 =head1 ADDITIONAL CLASSES
 
+In alphatical order:
+
 =head2 API::Discogs::Artist
 
 =item data_quality
@@ -604,7 +595,7 @@ A string with a profile of the artist.
 
 The URL to fetch all of the releases of this Artist using the Discogs API.
 
-=item resource_url
+=item resource-url
 
 The URL to fetch this object using the Discogs API.
 
@@ -616,13 +607,79 @@ The URL to access information about this artist on the Discogs website.
 
 A list of URLs associated with this artist.
 
+=head2 API::Discogs::ArtistSummary
+
+=item anv
+
+A string with the artist name variation.
+
+=item id
+
+The artist ID.
+
+=item join
+
+A string indicating joining.
+
+=item name
+
+A string with the name.
+
+=item resource-url
+
+The URL to fetch the full artist information using the Discogs API.
+
+=item role
+
+A string indicating the role of this artist.
+
+=item tracks
+
+A string indicating the tracks on which the artist participated.
+
+=head2 API::Discogs::Community
+
+Usually obtained indirectly from the C<community> method on the
+L<Release> object.  These methods can also be called directly on
+the L<Release> object, as these are also provided as shortcuts.
+
+=item contributors
+
+A list of L<User> objects of contributors to the community information
+of this release.
+
+=item data_quality
+
+A string describing the quality of the data of this release.
+
+=item have
+
+An integer indicating how many community members have this release.
+
+=item rating
+
+A rational number indicating the rating the members of the community
+have given this release.
+
+=item status
+
+The status of the information about this release in the community.
+
+=item submitter
+
+The L<User> object for the submitter of this release.
+
+=item want
+
+An integer indicating how many community members want to have this release.
+
 =head2 API::Discogs::Image
 
 =item height
 
 The height of the image in pixels.
 
-=item resource_url
+=item resource-url
 
 The URL to access this image on the Discogs image website.
 
@@ -643,6 +700,58 @@ image website.
 
 The width of the image in pixels.
 
+=head2 API::Discogs::Label
+
+The C<Label> object represents a label, company, recording studio,
+location, or other entity involved with L<Artist>s and L<Release>s.
+Labels were recently expanded in scope to include things that aren't
+labels – the name is an artifact of this history.
+
+=item contact_info
+
+A string with contact information for this label.
+
+=item data_quality
+
+A string describing the quality of the data of this label.
+
+=item id
+
+The ID of this label.
+
+=item images
+
+A list of L<Image> objects for this label.
+
+=item name
+
+A string with the name of this label.
+
+=item profile
+
+A string with a profile about this label.
+
+=item releases_url
+
+A URL to retrieve all the L<Release> objects associated with this
+label using the Discogs API.
+
+=item resource-url
+
+The URL to obtain the information about this label using the Discogs API.
+
+=item sublabels
+
+A list of L<SubLabel> objects describing subdivisions of this label.
+
+=item uri
+
+A URL to see the information of this label on the Discogs website.
+
+=item urls
+
+A list of URLs related to this label.
+
 =head2 API::Discogs::Member
 
 =item active
@@ -658,7 +767,7 @@ The ID of this member as a separate L<API::Discogs::Artist>.
 
 The name of this member.
 
-=item resource_url
+=item resource-url
 
 The URL to fetch L<API::Discogs::Artist> object of this member using
 the Discogs API.
@@ -682,6 +791,11 @@ associated with this release.
 
 A list of L<CatalogEntry> objects of entities that had something to do
 with this release.
+
+=item contributors
+
+A list of L<User> objects of contributors to the community information
+of this release.
 
 =item country
 
@@ -721,6 +835,10 @@ A list of L<Format> objects that are available for this release.
 
 A list of strings describing the genres of this release.
 
+=item have
+
+An integer indicating how many community members have this release.
+
 =item id
 
 The integer value that identifies this release.
@@ -759,6 +877,11 @@ A string with additional notes about this release.
 An integer value indicating the number of copies for sale for this release
 on the Discogs Marketplace.
 
+=item rating
+
+A rational number indicating the rating the members of the community
+have given this release.
+
 =item release_formatted
 
 A string with a human readable form of the date this release was released.
@@ -767,7 +890,7 @@ A string with a human readable form of the date this release was released.
 
 A string with a machine readable for of the date this release was released.
 
-=item resource_url
+=item resource-url
 
 The URL to fetch this L<API::Discogs::Release> object using the Discogs API.
 
@@ -782,6 +905,10 @@ A string indicating the status of the information of this release.
 =item styles
 
 A list of strings indicating the styles of this release.
+
+=item submitter
+
+The L<User> object for the submitter of this release.
 
 =item thumb
 
@@ -803,9 +930,58 @@ The URL to access this release on the Discogs image website.
 
 A list of L<Video> objects associated with this release.
 
+=item want
+
+An integer indicating how many community members want to have this release.
+
 =item year
 
 An integer value of the year this release was released.
+
+=head2 API::Discogs::Pagination
+
+This object is usually created as part of some kind of search result that
+allows for pagination.
+
+=item items
+
+An integer with the number of items in this page.
+
+=item page
+
+An integer with the page number of the information of this page.
+
+=item pages
+
+An integer with the total number of pages available with the current
+C<per-page> value.
+
+=item per-page
+
+An integer with the maximum number of items per page.
+
+=item urls
+
+A hash of URLs for moving between pages.  Usually accessed with
+shortcut methods of the object incorporating this C<Pagination>
+object.
+
+=head2 API::Discogs::SubLabel
+
+This object is usually created as part of the L<Label> object.
+
+=item id
+
+The ID of this sublabel.
+
+=item name
+
+A string with the name of this sublabel.
+
+=item resource-url
+
+The URL to get the full L<Label> information of this C<SubLabel> using
+the Discogs API.
 
 =head1 AUTHOR
 
