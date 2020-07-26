@@ -8,8 +8,8 @@ my constant @currencies = <
 subset AllowedCurrency of Str where * (elem) @currencies;
 
 my %valid_query_key is Set = <
-  anv artist barcode catno contributor country credit format genre label
-  query release_title style submitter title track type year
+  anv artist barcode catno contributor country credit format genre
+  label query release_title style submitter title track type year
 >;
 
 # needs to be defined here for visibility
@@ -19,9 +19,9 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     has AllowedCurrency $.currency = @currencies[0];
     has Cro::HTTP::Client $.client = $default-client;
     has UInt            $.per-page = 50;
+    has Str $!token  is built = %*ENV<DISCOGS_TOKEN>;
     has Str $.key;
     has Str $!secret is built;
-    has Str $!token  is built;
 
     # helper method for setting pagination parameters
     method !pagination(%nameds --> Str:D) {
