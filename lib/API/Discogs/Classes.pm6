@@ -303,6 +303,24 @@ our class LabelReleases does Hash2Class[
   pagination  => Pagination,
 ] does PaginationURLs { }
 
+our class SearchResult does Hash2Class[
+  cover_image  => URL,
+  id           => UInt,
+  master_id    => UInt,
+  master_url   => URL,
+  resource_url => URL,
+  thumb        => URL,
+  title        => Str,
+  type         => Str,
+  uri          => URL,
+  user_data    => StatsData,
+] { }
+
+our class SearchResults does Hash2Class[
+  '@results' => SearchResult,
+  pagination => Pagination,
+] does PaginationURLs { }
+
 =begin pod
 
 =head1 NAME

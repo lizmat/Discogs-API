@@ -7,32 +7,38 @@ my constant @currencies = <
 >;
 subset AllowedCurrency of Str where * (elem) @currencies;
 
+my %valid_query_key is Set = <
+  anv artist barcode catno contributor country credit format genre label
+  query release_title style submitter title track type year
+>;
+
 # needs to be defined here for visibility
 my $default-client;
 
-class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
+our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     has AllowedCurrency $.currency = @currencies[0];
     has Cro::HTTP::Client $.client = $default-client;
     has UInt            $.per-page = 50;
     has Str $.key;
     has Str $!secret is built;
+    has Str $!token  is built;
 
     # helper method for setting pagination parameters
     method !pagination(%nameds --> Str:D) {
-        my UInt $page     := %nameds<page>     // 1;
-        my UInt $per-page := %nameds<per-page> // $.per-page;
+        my UInt $page     := %nameds<page>:delete     // 1;
+        my UInt $per-page := %nameds<per-page>:delete // $.per-page;
         "page=$page&per_page=$per-page"
     }
 
     # main worker for creating non-asynchronous work
     method GET(API::Discogs:D: $uri, $class) {
-        my $resp := await $.client.get(
-          $!secret && $.key
-            ?? ($uri, headers => (
-                 Authorization => "Discogs key=$.key, secret=$!secret"
-               ))
-            !! $uri
-        );
+        my @headers;
+        @headers.push((Authorization => "Discogs key=$.key, secret=$!secret"))
+          if $!secret && $.key;
+        @headers.push((Authorization => "Discogs token=$!token"))
+          if $!token;
+
+        my $resp := await $.client.get($uri, :@headers);
         $class.new(await $resp.body)
     }
 
@@ -108,6 +114,23 @@ class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     --> CommunityReleaseRating:D) {
         self.community-release-rating($release.id)
     }
+
+    method search(API::Discogs:D: *%_ --> SearchResults:D) {
+        my str @params = self!pagination(%_);
+        for %_.kv -> $key, $value {
+            if %valid_query_key{$key} {
+                @params.push($key eq 'query'
+                  ?? "q=$value"
+                  !! "$key=$value"
+                );
+                %_{$key}:delete;
+            }
+        }
+        if %_.keys -> @extra {
+            die "Found unsupported query keys: @extra.sort()";
+        }
+        self.GET("/database/search?" ~ @params.join("&"), SearchResults)
+    }
 }
 
 $default-client := Cro::HTTP::Client.new:
@@ -116,41 +139,6 @@ $default-client := Cro::HTTP::Client.new:
     Accepts    => "application/vnd.discogs.v2.discogs+json",
     User-agent => "Raku Discogs Agent v" ~ API::Discogs.^ver,
   );
-
-my $discogs := API::Discogs.new;
-#my $release := $discogs.release(249504);
-#dd $_ for $release.community.contributors;
-#dd $release.released;
-#dd $release.date_added;
-#dd $release.artists;
-#
-#my $user-rating := $discogs.user-release-rating($release, "memory");
-#dd $user-rating;
-#
-#my $community-rating := $discogs.community-release-rating($release);
-#dd $community-rating;
-#
-#my $master-release = $discogs.master-release(1000);
-#dd $_ for $master-release.tracklist;
-#
-#my $release-versions = $discogs.release-versions(1000,:2page,:2per-page);
-#dd $release-versions.next-page-url;
-#dd $_ for $release-versions(:2per-page).pagination.urls;
-#
-#my $artist = $discogs.artist(108713);
-#dd $artist.name;
-#dd $_ for $artist.namevariations;
-#dd $artist.profile;
-#
-#my $artist-releases = $discogs.artist-releases(108713);
-#dd $_ for $artist-releases.releases;
-#
-#my $label = $discogs.label(1);
-#dd $label.name;
-#dd $_ for $label.sublabels;
-#
-#my $label-releases = $discogs.label-releases(1);
-#dd $_ for $label-releases.releases;
 
 =begin pod
 
