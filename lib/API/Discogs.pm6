@@ -50,7 +50,7 @@ my role PaginationShortcuts {
 #--------------- actual class and its attributes -------------------------------
 
 our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
-    has AllowedCurrency $.currency = @currencies[0];
+    has AllowedCurrency $.currency = %*ENV<DISCOGS_CURRENCY> // @currencies[0];
     has Cro::HTTP::Client $.client = $default-client;
     has UInt            $.per-page = 50;
     has Str $!token  is built = %*ENV<DISCOGS_TOKEN>;
