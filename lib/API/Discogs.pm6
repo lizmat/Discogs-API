@@ -207,7 +207,14 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       released          => Str,
       release_formatted => { type => Str, name => 'release-formatted' },
       resource_url      => { type => URL, name => 'resource-url' },
-    ] { }
+    ] {
+        method average()      { $.community.rating.average }
+        method contributors() { $.community.contributors   }
+        method count()        { $.community.rating.count   }
+        method have()         { $.community.have           }
+        method submitter()    { $.community.submitter      }
+        method want()         { $.community.have           }
+    }
 
     our class FilterFacet does Hash2Class[
       '@values'              => Value,
@@ -774,6 +781,19 @@ The name of this member.
 
 The URL to fetch L<API::Discogs::Artist> object of this member using
 the Discogs API.
+
+=head2 API::Discogs::Rating
+
+A rating, usually automatically created with a L<Community> object.
+
+=item average
+
+A rational value indicating the average rating of the object associated
+with the associated L<Community> object.
+
+=item count
+
+An integer value indicating the number of votes cast by community members.
 
 =head2 API::Discogs::Release
 
