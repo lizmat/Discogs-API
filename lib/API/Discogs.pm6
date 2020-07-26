@@ -40,6 +40,11 @@ my role PaginationURLs {
     method next-page-url(::?CLASS:D:)     { $.pagination.urls<next>  // Nil }
     method previous-page-url(::?CLASS:D:) { $.pagination.urls<prev>  // Nil }
     method last-page-url(::?CLASS:D:)     { $.pagination.urls<first> // Nil }
+
+    method items(::?CLASS:D:)    { $.pagination.items }
+    method page(::?CLASS:D:)     { $.pagination.page }
+    method pages(::?CLASS:D:)    { $.pagination.pages }
+    method per-page(::?CLASS:D:) { $.pagination.per-page }
 }
 
 #--------------- actual class and its attributes -------------------------------
@@ -128,16 +133,70 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       uri         => URL,
     ] { }
 
-    our class UserReleaseRating does Hash2Class[
-      rating      => ValidRating,
-      release     => UInt,
-      username    => Username,
+    our class Stats does Hash2Class[
+      '%source' => StatsData,
     ] { }
 
-    our class CommunityReleaseRating does Hash2Class[
-      rating      => Rating,
-      releasei_id => UInt,
+    our class Member does Hash2Class[
+      active       => Bool,
+      id           => UInt,
+      name         => Str,
+      resource_url => Str,
     ] { }
+
+    our class Value does Hash2Class[
+      count => Int,
+      title => Str,
+      value => Str,
+    ] { }
+
+    our class FilterFacet does Hash2Class[
+      '@values'              => Value,
+      allows_multiple_values => Bool,
+      id                     => Str,
+      title                  => Str,
+    ] { }
+
+    our class Filters does Hash2Class[
+      '%applied'   => FilterFacet,
+      '%available' => UInt,
+    ] { }
+
+    our class StatsData does Hash2Class[
+      in_collection => Int,
+      in_wantlist   => Int,
+    ] { }
+
+    our class Pagination does Hash2Class[
+      '%urls'  => URL,
+      items    => UInt,
+      page     => UInt,
+      pages    => UInt,
+      per_page => UInt,
+    ] { }
+
+#--------------- the specific methods one can call -----------------------------
+
+    # helper method for setting pagination parameters
+    method !pagination(%nameds --> Str:D) {
+        my UInt $page     := %nameds<page>:delete     // 1;
+        my UInt $per-page := %nameds<per-page>:delete // $.per-page;
+        "page=$page&per_page=$per-page"
+    }
+
+    # main worker for creating non-asynchronous work
+    method GET(API::Discogs:D: $uri, $class) {
+        my @headers;
+        @headers.push((Authorization => "Discogs key=$.key, secret=$!secret"))
+          if $!secret && $.key;
+        @headers.push((Authorization => "Discogs token=$!token"))
+          if $!token;
+
+        my $resp := await $.client.get($uri, :@headers);
+        $class.new(await $resp.body)
+    }
+
+#-------------- getting the information of a specific release -------------------
 
     our class Release does Hash2Class[
       '@artists'        => ArtistSummary,
@@ -176,29 +235,46 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       year              => Year,
     ] { }
 
-    our class StatsData does Hash2Class[
-      in_collection => Int,
-      in_wantlist   => Int,
+    method release(API::Discogs:D:
+      UInt:D $id, AllowedCurrency:D :$currency = $.currency
+    --> Release) {
+        self.GET("/releases/$id?$currency", Release)
+    }
+
+    our class UserReleaseRating does Hash2Class[
+      rating      => ValidRating,
+      release     => UInt,
+      username    => Username,
     ] { }
 
-    our class Stats does Hash2Class[
-      '%source' => StatsData,
+    our class CommunityReleaseRating does Hash2Class[
+      rating      => Rating,
+      releasei_id => UInt,
     ] { }
 
-    our class ArtistRelease does Hash2Class[
-      '%stats'     => StatsData,
-      artist       => Str,
-      format       => Str,
-      id           => UInt,
-      label        => Str,
-      resource_url => URL,
-      role         => Str,
-      status       => Status,
-      thumb        => URL,
-      title        => Str,
-      type         => Str,
-      year         => Year,
-    ] { }
+    multi method user-release-rating(API::Discogs:D:
+      UInt:D $id, Username $username
+    --> UserReleaseRating:D) {
+        self.GET("/releases/$id/rating/$username", UserReleaseRating)
+    }
+    multi method user-release-rating(API::Discogs:D:
+      Release:D $release, Username $username
+    --> UserReleaseRating:D) {
+        self.user-release-rating($release.id, $username)
+    }
+
+    multi method community-release-rating(API::Discogs:D:
+      UInt:D $id
+    --> CommunityReleaseRating:D) {
+        self.GET("/releases/$id/rating", CommunityReleaseRating)
+    }
+    multi method community-release-rating(API::Discogs:D:
+      Release:D $release
+    --> CommunityReleaseRating:D) {
+        self.community-release-rating($release.id)
+    }
+
+#-------------- getting the information of a master release ---------------------
 
     our class MasterRelease does Hash2Class[
       '@artists'              => ArtistSummary,
@@ -222,26 +298,13 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       year                    => Year,
     ] { }
 
-    our class Member does Hash2Class[
-      active       => Bool,
-      id           => UInt,
-      name         => Str,
-      resource_url => Str,
-    ] { }
+    method master-release(API::Discogs:D:
+      UInt:D $id
+    --> MasterRelease:D) {
+        self.GET("/masters/$id", MasterRelease)
+    }
 
-    our class Artist does Hash2Class[
-      '@images'         => Image,
-      '@members'        => Member,
-      '@namevariations' => Str,
-      '@urls'           => URL,
-      data_quality      => Quality,
-      id                => UInt,
-      name              => Str,
-      profile           => Str,
-      releases_url      => URL,
-      resource_url      => URL,
-      uri               => URL,
-    ] { }
+#-------------- getting the versions of a release -------------------------------
 
     our class ReleaseVersion does Hash2Class[
       '@major_formats' => Str,
@@ -258,32 +321,6 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       title            => Str,
     ] { }
 
-    our class Value does Hash2Class[
-      count => Int,
-      title => Str,
-      value => Str,
-    ] { }
-
-    our class FilterFacet does Hash2Class[
-      '@values'              => Value,
-      allows_multiple_values => Bool,
-      id                     => Str,
-      title                  => Str,
-    ] { }
-
-    our class Pagination does Hash2Class[
-      '%urls'  => URL,
-      items    => UInt,
-      page     => UInt,
-      pages    => UInt,
-      per_page => UInt,
-    ] { }
-
-    our class Filters does Hash2Class[
-      '%applied'   => FilterFacet,
-      '%available' => UInt,
-    ] { }
-
     our class ReleaseVersions does Hash2Class[
       '@filter_facets' => FilterFacet,
       '@filters'       => Filters,
@@ -291,15 +328,21 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       pagination       => Pagination,
     ] does PaginationURLs { }
 
-    our class ArtistReleases does Hash2Class[
-      '@releases' => ArtistRelease,
-      pagination  => Pagination,
-    ] does PaginationURLs { }
+    method release-versions(API::Discogs:D:
+      UInt:D $id
+    --> ReleaseVersions:D) {
+        self.GET(
+          "/masters/$id/versions?" ~ self!pagination(%_),
+          ReleaseVersions
+        )
+    }
+
+#-------------- getting the information of a label ------------------------------
 
     our class SubLabel does Hash2Class[
-      id           => Int,
+      id           => UInt,
       name         => Str,
-      resource_url => Str,
+      resource_url => URL,
     ] { }
 
     our class Label does Hash2Class[
@@ -315,6 +358,14 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       resource_url => URL,
       uri          => URL,
     ] { }
+
+    method label(API::Discogs:D:
+      UInt:D $id
+    --> Label:D) {
+        self.GET("/labels/$id", Label)
+    }
+
+#-------------- getting the releases of a label ---------------------------------
 
     our class LabelRelease does Hash2Class[
       artist       => Str,
@@ -333,6 +384,70 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       pagination  => Pagination,
     ] does PaginationURLs { }
 
+    method label-releases(API::Discogs:D:
+      UInt:D $id
+    --> LabelReleases:D) {
+        self.GET(
+          "/labels/$id/releases?" ~ self!pagination(%_),
+          LabelReleases
+        )
+    }
+
+#-------------- getting the information about an artist -------------------------
+
+    our class Artist does Hash2Class[
+      '@images'         => Image,
+      '@members'        => Member,
+      '@namevariations' => Str,
+      '@urls'           => URL,
+      data_quality      => Quality,
+      id                => UInt,
+      name              => Str,
+      profile           => Str,
+      releases_url      => URL,
+      resource_url      => URL,
+      uri               => URL,
+    ] { }
+
+    method artist(API::Discogs:D:
+      UInt:D $id
+    --> Artist:D) {
+        self.GET("/artists/$id", Artist)
+    }
+
+#-------------- getting the releases of an artist -------------------------------
+
+    our class ArtistRelease does Hash2Class[
+      '%stats'     => StatsData,
+      artist       => Str,
+      format       => Str,
+      id           => UInt,
+      label        => Str,
+      resource_url => URL,
+      role         => Str,
+      status       => Status,
+      thumb        => URL,
+      title        => Str,
+      type         => Str,
+      year         => Year,
+    ] { }
+
+    our class ArtistReleases does Hash2Class[
+      '@releases' => ArtistRelease,
+      pagination  => Pagination,
+    ] does PaginationURLs { }
+
+    method artist-releases(API::Discogs:D:
+      UInt:D $id
+    --> ArtistReleases:D) {
+        self.GET(
+          "/artists/$id/releases?" ~ self!pagination(%_),
+          ArtistReleases
+        )
+    }
+
+#-------------- searching the Discogs database ----------------------------------
+
     our class SearchResult does Hash2Class[
       cover_image  => URL,
       id           => UInt,
@@ -350,100 +465,6 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       '@results' => SearchResult,
       pagination => Pagination,
     ] does PaginationURLs { }
-
-#--------------- the specific methods one can call -----------------------------
-
-    # helper method for setting pagination parameters
-    method !pagination(%nameds --> Str:D) {
-        my UInt $page     := %nameds<page>:delete     // 1;
-        my UInt $per-page := %nameds<per-page>:delete // $.per-page;
-        "page=$page&per_page=$per-page"
-    }
-
-    # main worker for creating non-asynchronous work
-    method GET(API::Discogs:D: $uri, $class) {
-        my @headers;
-        @headers.push((Authorization => "Discogs key=$.key, secret=$!secret"))
-          if $!secret && $.key;
-        @headers.push((Authorization => "Discogs token=$!token"))
-          if $!token;
-
-        my $resp := await $.client.get($uri, :@headers);
-        $class.new(await $resp.body)
-    }
-
-    method label(API::Discogs:D:
-      UInt:D $id
-    --> Label:D) {
-        self.GET("/labels/$id", Label)
-    }
-
-    method label-releases(API::Discogs:D:
-      UInt:D $id
-    --> LabelReleases:D) {
-        self.GET(
-          "/labels/$id/releases?" ~ self!pagination(%_),
-          LabelReleases
-        )
-    }
-
-    method artist(API::Discogs:D:
-      UInt:D $id
-    --> Artist:D) {
-        self.GET("/artists/$id", Artist)
-    }
-
-    method artist-releases(API::Discogs:D:
-      UInt:D $id
-    --> ArtistReleases:D) {
-        self.GET(
-          "/artists/$id/releases?" ~ self!pagination(%_),
-          ArtistReleases
-        )
-    }
-
-    method master-release(API::Discogs:D:
-      UInt:D $id
-    --> MasterRelease:D) {
-        self.GET("/masters/$id", MasterRelease)
-    }
-
-    method release-versions(API::Discogs:D:
-      UInt:D $id
-    --> ReleaseVersions:D) {
-        self.GET(
-          "/masters/$id/versions?" ~ self!pagination(%_),
-          ReleaseVersions
-        )
-    }
-
-    method release(API::Discogs:D:
-      UInt:D $id, AllowedCurrency:D :$currency = $.currency
-    --> Release) {
-        self.GET("/releases/$id?$currency", Release)
-    }
-
-    multi method user-release-rating(API::Discogs:D:
-      UInt:D $id, Username $username
-    --> UserReleaseRating:D) {
-        self.GET("/releases/$id/rating/$username", UserReleaseRating)
-    }
-    multi method user-release-rating(API::Discogs:D:
-      Release:D $release, Username $username
-    --> UserReleaseRating:D) {
-        self.user-release-rating($release.id, $username)
-    }
-
-    multi method community-release-rating(API::Discogs:D:
-      UInt:D $id
-    --> CommunityReleaseRating:D) {
-        self.GET("/releases/$id/rating", CommunityReleaseRating)
-    }
-    multi method community-release-rating(API::Discogs:D:
-      Release:D $release
-    --> CommunityReleaseRating:D) {
-        self.community-release-rating($release.id)
-    }
 
     method search(API::Discogs:D: *%_ --> SearchResults:D) {
         my str @params = self!pagination(%_);
