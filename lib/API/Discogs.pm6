@@ -347,7 +347,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       pagination       => Pagination,
     ] does PaginationShortcuts { }
 
-    method release-versions(API::Discogs:D:
+    method master-release-versions(API::Discogs:D:
       UInt:D $id
     --> MasterReleaseVersions:D) {
         self.GET(
@@ -641,11 +641,11 @@ my $release = $discogs.release(249504);
 Fetch the information for the given release ID and return that in
 an L<API::Discogs::Release> object.
 
-=head2 release-versions
+=head2 master-release-versions
 
 =begin code :lang<raku>
 
-my $release-versions = $discogs.release-versions(
+my $master-release-versions = $discogs.master-release-versions(
   1000,           # the master release ID
   page     => 2,  # page number, default: 1
   per-page => 25, # items per page, default: object
