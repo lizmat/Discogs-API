@@ -176,6 +176,17 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         "page=$page&per_page=$per-page"
     }
 
+    # helper method for gathering named parameters
+    method !gather-nameds(%nameds, @keys --> Str:D) {
+        my str @text;
+        for @keys -> $key {
+            if %nameds{$key}:delete -> $value {
+                @text.push("$key.subst('-','_',:g)='$value'")
+            }
+        }
+        @text.join('&')
+    }
+
     # main worker for creating non-asynchronous work
     method GET(API::Discogs:D: $uri, $class) {
         my @headers;
@@ -331,7 +342,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       '%available' => UInt,
     ] { }
 
-    our class ReleaseVersion does Hash2Class[
+    our class MasterReleaseVersion does Hash2Class[
       '@major_formats' => { type => Str, name => 'major-formats' },
       '%label'         => Str,
       catno            => Str,
@@ -349,15 +360,19 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class MasterReleaseVersions does Hash2Class[ # OK
       '@filter_facets' => { type => FilterFacet, name => 'filter-facets' },
       '@filters'       => Filters,
-      '@versions'      => ReleaseVersion,
+      '@versions'      => MasterReleaseVersion,
       pagination       => Pagination,
     ] does PaginationShortcuts { }
 
     method master-release-versions(API::Discogs:D:
-      UInt:D $id
+      UInt:D $id,
     --> MasterReleaseVersions:D) {
         self.GET(
-          "/masters/$id/versions?" ~ self!pagination(%_),
+          "/masters/$id/versions?"
+            ~ self!gather-nameds(
+                %_, <format label released country sort sort-order>
+              ),
+            ~ self!pagination(%_),
           MasterReleaseVersions
         )
     }
@@ -705,15 +720,69 @@ that in an L<API::Discogs::MasterRelease> object.
 =begin code :lang<raku>
 
 my $master-release-versions = $discogs.master-release-versions(
-  1000,           # the master release ID
-  page     => 2,  # page number, default: 1
-  per-page => 25, # items per page, default: object
+  1000,                 # the master release ID
+  page     => 2,        # page number, default: 1
+  per-page => 25,       # items per page, default: object
+
+  format => "CD",       # limit to format, default no limit
+  label  => "Foo",      # limit to label, default no limit
+  released => 1992,     # limit to year, default no limit
+  country => "Belgium", # limit to country, default no limit
+  sort => "released",   # sort on given key, default no sort
+  sort-order => "desc", # sort order, default to "asc"
 );
 
 =end code
 
 Fetch all of the versions of a given master release ID and return
-them in pages in a L<API::Discogs::MasterReleaseVersions> object.
+them in pages in a L<API::Discogs::MasterReleaseVersions> object.  It
+supports the following optional named parameters:
+
+=item page
+
+An integer indicating the page to obtain the C<MasterReleaseVersion>
+objects of.  Defaults to 1.
+
+=item per-page
+
+An integer indicating the maximum number of items per page to be
+produced.  Defaults to what was (implicitely) specified with the
+creation of the C<API::Discogs> object.
+
+=item format
+
+A string indicating the C<format> of the C<MasterReleaseVersion> objects
+to be returned.  Defaults to no limitation on format.
+
+=item label
+
+A string indicating the C<label> of the C<MasterReleaseVersion> objects
+to be returned.  Defaults to no limitation on label.
+
+=item released
+
+An integer indicating the year of release of the C<MasterReleaseVersion>
+objects to be returned.  Defaults to no limitation on year.
+
+=item country
+
+A string indicating the C<country> of the C<MasterReleaseVersion> objects
+to be returned.  Defaults to no limitation on country.
+
+=item sort
+
+A string indicating how the C<MasterReleaseVersion> objects to be returned.
+Defaults to no sorting.  The following fields can be specified:
+
+  released title format label catno country
+
+=item sort-order
+
+A string indicating the sort order of any sort action to be performed
+on the C<MasterReleaseVersion> objects to be returned.  Defaults to "asc".
+The following fields can be specified:
+
+  asc desc
 
 =head2 release
 
@@ -1154,7 +1223,7 @@ website.
 
 =item versions-url
 
-A URL to fetch the L<API::Discogs::ReleaseVersion> objects for this
+A URL to fetch the L<API::Discogs::MasterReleaseVersion> objects for this
 master release using the Discogs API.
 
 =item videos
@@ -1168,7 +1237,7 @@ An integer for the year in which this master release was released.
 
 =head2 API::Discogs::MasterReleaseVersions
 
-Retrieves a list of all L<API::Discogs::ReleaseVersion> objects that are
+Retrieves a list of all L<API::Discogs::MasterReleaseVersion> objects that are
 versions of a given master release ID, and pagination settings.
 
 =item filter-facets
@@ -1192,7 +1261,7 @@ available.
 
 =item items
 
-An integer indicating the total number of L<API::Discogs::ReleaseVersion>
+An integer indicating the total number of L<API::Discogs::MasterReleaseVersion>
 objects there are available for this master release.
 
 =item last-page
@@ -1245,7 +1314,7 @@ Discogs API.  Returns C<Nil> if already on the first page.
 
 =item versions
 
-A list of L<API::Discogs::ReleaseVersion> objects.
+A list of L<API::Discogs::MasterReleaseVersion> objects.
 
 =head2 API::Discogs::Member
 
