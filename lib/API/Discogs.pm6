@@ -398,7 +398,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       year         => UInt,
     ] { }
 
-    our class LabelReleases does Hash2Class[
+    our class LabelReleases does Hash2Class[ # OK
       '@releases' => LabelRelease,
       pagination  => Pagination,
     ] does PaginationShortcuts { }
@@ -853,6 +853,87 @@ A URL to see the information of this label on the Discogs website.
 
 A list of URLs related to this label.
 
+=head2 API::Discogs::LabelReleases
+
+Retrieves a list of all L<API::Discogs::LabelRelease> objects that are
+versions of a given master release ID, and pagination settings.
+
+=item filter-facets
+
+A list of L<API::Discogs::FilterFacet> objects associated with this object.
+
+=item filters
+
+A list of L<API::Discogs::Filter> objects associated with this object.
+
+=item first-page
+
+Returns the first page of the information of this object, or C<Nil> if
+already on the first page.
+
+=item first-page-url
+
+The URL to fetch the data of the B<first> page of this object using the
+Discogs API.  Returns C<Nil> if the there is only one page of information
+available.
+
+=item items
+
+An integer indicating the total number of L<API::Discogs::LabelRelease>
+objects there are available for this master release.
+
+=item last-page
+
+Returns the last page of the information of this object, or C<Nil> if
+already on the last page.
+
+=item last-page-url
+
+The URL to fetch the data of the B<last> page of this object using the
+Discogs API.  Returns C<Nil> if already on the last page.
+
+=item next-page
+
+Returns the next page of the information of this object, or C<Nil> if
+already on the last page.
+
+=item next-page-url
+
+The URL to fetch the data of the B<next> page of this object using the
+Discogs API.  Returns C<Nil> if already on the last page.
+
+=item page
+
+An integer indicating the page number of this object.
+
+=item pages
+
+An integer indicating the number of pages of information available for
+this object.
+
+=item pagination
+
+The L<API::Discogs::Pagination> object associted with this object.
+Usually not needed, as its information is available in shortcut methods.
+
+=item per-page
+
+An integer representing the maximum number of items on a page.
+
+=item previous-page
+
+Returns the previous page of the information of this object, or C<Nil> if
+already on the first page.
+
+=item previous-page-url
+
+The URL to fetch the data of the B<previous> page of this object using the
+Discogs API.  Returns C<Nil> if already on the first page.
+
+=item releases
+
+A list of L<API::Discogs::LabelRelease> objects.
+
 =head2 API::Discogs::MasterRelease
 
 The MasterRelease object represents a set of similar
@@ -948,7 +1029,7 @@ An integer for the year in which this master release was released.
 
 =head2 API::Discogs::MasterReleaseVersions
 
-Retrieves a list of all L<API::Discogs::MasterReleaseVersions> objects that are
+Retrieves a list of all L<API::Discogs::ReleaseVersion> objects that are
 versions of a given master release ID, and pagination settings.
 
 =item filter-facets
