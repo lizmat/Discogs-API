@@ -36,6 +36,8 @@ subset Year of UInt where $_ > 1900 && $_ <= 2100;
 #--------------- useful roles --------------------------------------------------
 
 my role PaginationShortcuts {
+    has $.client is rw;
+
     method first-page-url(::?CLASS:D:)    { $.pagination.urls<first> // Nil }
     method next-page-url(::?CLASS:D:)     { $.pagination.urls<next>  // Nil }
     method previous-page-url(::?CLASS:D:) { $.pagination.urls<prev>  // Nil }
@@ -45,6 +47,17 @@ my role PaginationShortcuts {
     method page(::?CLASS:D:)     { $.pagination.page }
     method pages(::?CLASS:D:)    { $.pagination.pages }
     method per-page(::?CLASS:D:) { $.pagination.per-page }
+
+    method !GET(Str:D $URL) {
+        $URL
+          ?? self.client.GET($URL, self.WHAT)
+          !! $URL
+    }
+
+    method first-page(::?CLASS:D:)    { self!GET(self.first-page-url)    }
+    method next-page(::?CLASS:D:)     { self!GET(self.next-page-url)     }
+    method previous-page(::?CLASS:D:) { self!GET(self.previous-page-url) }
+    method last-page(::?CLASS:D:)     { self!GET(self.last-page-url)     }
 }
 
 #--------------- actual class and its attributes -------------------------------
@@ -172,15 +185,19 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
           if $!token;
 
         my $resp := await $.client.get($uri, :@headers);
-        $class.new(await $resp.body)
+        my $object := $class.new(await $resp.body);
+
+        $object.client = self if $class ~~ PaginationShortcuts;
+        $object
     }
 
+    # accessing the Cro::HTTP::Client
     multi method client(API::Discogs:U:) { $default-client }
     multi method client(API::Discogs:D:) { $!client }
 
 #-------------- getting the information of a specific release -------------------
 
-    our class Release does Hash2Class[
+    our class Release does Hash2Class[ # OK
       '@artists'        => ArtistSummary,
       '@companies'      => CatalogEntry,
       '@extraartists'   => ArtistSummary,
@@ -323,7 +340,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       title            => Str,
     ] { }
 
-    our class ReleaseVersions does Hash2Class[
+    our class ReleaseVersions does Hash2Class[ # OK
       '@filter_facets' => { type => FilterFacet, name => 'filter-facets' },
       '@filters'       => Filters,
       '@versions'      => ReleaseVersion,
@@ -624,6 +641,21 @@ my $release = $discogs.release(249504);
 Fetch the information for the given release ID and return that in
 an L<API::Discogs::Release> object.
 
+=head2 release-versions
+
+=begin code :lang<raku>
+
+my $release-versions = $discogs.release-versions(
+  1000,           # the master release ID
+  page     => 2,  # page number, default: 1
+  per-page => 25, # items per page, default: object
+);
+
+=end code
+
+Fetch all of the versions of a given master release ID and return
+them in pages in a L<API::Discogs::ReleaseVersions> object.
+
 =head1 ADDITIONAL CLASSES
 
 In alphatical order:
@@ -912,6 +944,7 @@ release.
 
 =item year
 
+An integer for the year in which this master release was released.
 
 =head2 API::Discogs::Member
 
@@ -933,6 +966,34 @@ The name of this member.
 The URL to fetch L<API::Discogs::Artist> object of this member using
 the Discogs API.
 
+=head2 API::Discogs::Pagination
+
+This object is usually created as part of some kind of search result that
+allows for pagination.
+
+=item items
+
+An integer with the number of items in this page.
+
+=item page
+
+An integer with the page number of the information of this page.
+
+=item pages
+
+An integer with the total number of pages available with the current
+C<per-page> value.
+
+=item per-page
+
+An integer with the maximum number of items per page.
+
+=item urls
+
+A hash of URLs for moving between pages.  Usually accessed with
+shortcut methods of the object incorporating this C<Pagination>
+object.
+
 =head2 API::Discogs::Rating
 
 A rating, usually automatically created with a L<API::Discogs::Community>
@@ -949,9 +1010,17 @@ An integer value indicating the number of votes cast by community members.
 
 =head2 API::Discogs::Release
 
+The C<API::Discogs::Release> object represents a particular physical or
+digital object released by one or more L<API::Discogs::Artist>s.
+
 =item artists
 
 A list of L<API::Discogs::ArtistSummary> objects for this release.
+
+=item average
+
+A rational value indicating the average rating of this release by
+community members.
 
 =item artists-sort
 
@@ -971,6 +1040,11 @@ something to do with this release.
 
 A list of L<API::Discogs::User> objects of contributors to the community
 information of this release.
+
+=item count
+
+An integer value indicating the number of votes cast by community members
+about this release.
 
 =item country
 
@@ -1120,33 +1194,86 @@ An integer indicating how many community members want to have this release.
 
 An integer value of the year this release was released.
 
-=head2 API::Discogs::Pagination
+=head2 API::Discogs::ReleaseVersions
 
-This object is usually created as part of some kind of search result that
-allows for pagination.
+Retrieves a list of all L<API::Discogs::ReleaseVersions> objects that are
+versions of a given master release ID, and pagination settings.
+
+=item filter-facets
+
+A list of L<API::Discogs::FilterFacet> objects associated with this object.
+
+=item filters
+
+A list of L<API::Discogs::Filter> objects associated with this object.
+
+=item first-page
+
+Returns the first page of the information of this object, or C<Nil> if
+already on the first page.
+
+=item first-page-url
+
+The URL to fetch the data of the B<first> page of this object using the
+Discogs API.  Returns C<Nil> if the there is only one page of information
+available.
 
 =item items
 
-An integer with the number of items in this page.
+An integer indicating the total number of L<API::Discogs::ReleaseVersion>
+objects there are available for this master release.
+
+=item last-page
+
+Returns the last page of the information of this object, or C<Nil> if
+already on the last page.
+
+=item last-page-url
+
+The URL to fetch the data of the B<last> page of this object using the
+Discogs API.  Returns C<Nil> if already on the last page.
+
+=item next-page
+
+Returns the next page of the information of this object, or C<Nil> if
+already on the last page.
+
+=item next-page-url
+
+The URL to fetch the data of the B<next> page of this object using the
+Discogs API.  Returns C<Nil> if already on the last page.
 
 =item page
 
-An integer with the page number of the information of this page.
+An integer indicating the page number of this object.
 
 =item pages
 
-An integer with the total number of pages available with the current
-C<per-page> value.
+An integer indicating the number of pages of information available for
+this object.
+
+=item pagination
+
+The L<API::Discogs::Pagination> object associted with this object.
+Usually not needed, as its information is available in shortcut methods.
 
 =item per-page
 
-An integer with the maximum number of items per page.
+An integer representing the maximum number of items on a page.
 
-=item urls
+=item previous-page
 
-A hash of URLs for moving between pages.  Usually accessed with
-shortcut methods of the object incorporating this C<Pagination>
-object.
+Returns the previous page of the information of this object, or C<Nil> if
+already on the first page.
+
+=item previous-page-url
+
+The URL to fetch the data of the B<previous> page of this object using the
+Discogs API.  Returns C<Nil> if already on the first page.
+
+=item versions
+
+A list of L<API::Discogs::ReleaseVersion> objects.
 
 =head2 API::Discogs::SubLabel
 
