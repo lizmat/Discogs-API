@@ -725,7 +725,7 @@ available.
 =item items
 
 An integer indicating the total number of L<API::Discogs::LabelRelease>
-objects there are available for this master release.
+objects there are available for this artist.
 
 =item last-page
 
@@ -945,7 +945,7 @@ available.
 =item items
 
 An integer indicating the total number of L<API::Discogs::LabelRelease>
-objects there are available for this master release.
+objects there are available for label.
 
 =item last-page
 
@@ -1420,6 +1420,79 @@ An integer indicating how many community members want to have this release.
 =item year
 
 An integer value of the year this release was released.
+
+=head2 API::Discogs::SearchResults
+
+Retrieves a list of L<API::Discogs::Searchresult> objects that match
+the given query parameters, and pagination settings.
+
+=item first-page
+
+Returns the first page of the information of this object, or C<Nil> if
+already on the first page.
+
+=item first-page-url
+
+The URL to fetch the data of the B<first> page of this object using the
+Discogs API.  Returns C<Nil> if the there is only one page of information
+available.
+
+=item items
+
+An integer indicating the total number of L<API::Discogs::SearchResult>
+objects there are available.
+
+=item last-page
+
+Returns the last page of the information of this object, or C<Nil> if
+already on the last page.
+
+=item last-page-url
+
+The URL to fetch the data of the B<last> page of this object using the
+Discogs API.  Returns C<Nil> if already on the last page.
+
+=item next-page
+
+Returns the next page of the information of this object, or C<Nil> if
+already on the last page.
+
+=item next-page-url
+
+The URL to fetch the data of the B<next> page of this object using the
+Discogs API.  Returns C<Nil> if already on the last page.
+
+=item page
+
+An integer indicating the page number of this object.
+
+=item pages
+
+An integer indicating the number of pages of information available for
+this object.
+
+=item pagination
+
+The L<API::Discogs::Pagination> object associted with this object.
+Usually not needed, as its information is available in shortcut methods.
+
+=item per-page
+
+An integer representing the maximum number of items on a page.
+
+=item previous-page
+
+Returns the previous page of the information of this object, or C<Nil> if
+already on the first page.
+
+=item previous-page-url
+
+The URL to fetch the data of the B<previous> page of this object using the
+Discogs API.  Returns C<Nil> if already on the first page.
+
+=item results
+
+A list of L<API::Discogs::SearchResult> objects.
 
 =head2 API::Discogs::SubLabel
 
