@@ -340,7 +340,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       title            => Str,
     ] { }
 
-    our class ReleaseVersions does Hash2Class[ # OK
+    our class MasterReleaseVersions does Hash2Class[ # OK
       '@filter_facets' => { type => FilterFacet, name => 'filter-facets' },
       '@filters'       => Filters,
       '@versions'      => ReleaseVersion,
@@ -349,10 +349,10 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
     method release-versions(API::Discogs:D:
       UInt:D $id
-    --> ReleaseVersions:D) {
+    --> MasterReleaseVersions:D) {
         self.GET(
           "/masters/$id/versions?" ~ self!pagination(%_),
-          ReleaseVersions
+          MasterReleaseVersions
         )
     }
 
@@ -654,7 +654,7 @@ my $release-versions = $discogs.release-versions(
 =end code
 
 Fetch all of the versions of a given master release ID and return
-them in pages in a L<API::Discogs::ReleaseVersions> object.
+them in pages in a L<API::Discogs::MasterReleaseVersions> object.
 
 =head1 ADDITIONAL CLASSES
 
@@ -946,6 +946,87 @@ release.
 
 An integer for the year in which this master release was released.
 
+=head2 API::Discogs::MasterReleaseVersions
+
+Retrieves a list of all L<API::Discogs::MasterReleaseVersions> objects that are
+versions of a given master release ID, and pagination settings.
+
+=item filter-facets
+
+A list of L<API::Discogs::FilterFacet> objects associated with this object.
+
+=item filters
+
+A list of L<API::Discogs::Filter> objects associated with this object.
+
+=item first-page
+
+Returns the first page of the information of this object, or C<Nil> if
+already on the first page.
+
+=item first-page-url
+
+The URL to fetch the data of the B<first> page of this object using the
+Discogs API.  Returns C<Nil> if the there is only one page of information
+available.
+
+=item items
+
+An integer indicating the total number of L<API::Discogs::ReleaseVersion>
+objects there are available for this master release.
+
+=item last-page
+
+Returns the last page of the information of this object, or C<Nil> if
+already on the last page.
+
+=item last-page-url
+
+The URL to fetch the data of the B<last> page of this object using the
+Discogs API.  Returns C<Nil> if already on the last page.
+
+=item next-page
+
+Returns the next page of the information of this object, or C<Nil> if
+already on the last page.
+
+=item next-page-url
+
+The URL to fetch the data of the B<next> page of this object using the
+Discogs API.  Returns C<Nil> if already on the last page.
+
+=item page
+
+An integer indicating the page number of this object.
+
+=item pages
+
+An integer indicating the number of pages of information available for
+this object.
+
+=item pagination
+
+The L<API::Discogs::Pagination> object associted with this object.
+Usually not needed, as its information is available in shortcut methods.
+
+=item per-page
+
+An integer representing the maximum number of items on a page.
+
+=item previous-page
+
+Returns the previous page of the information of this object, or C<Nil> if
+already on the first page.
+
+=item previous-page-url
+
+The URL to fetch the data of the B<previous> page of this object using the
+Discogs API.  Returns C<Nil> if already on the first page.
+
+=item versions
+
+A list of L<API::Discogs::ReleaseVersion> objects.
+
 =head2 API::Discogs::Member
 
 =item active
@@ -1193,87 +1274,6 @@ An integer indicating how many community members want to have this release.
 =item year
 
 An integer value of the year this release was released.
-
-=head2 API::Discogs::ReleaseVersions
-
-Retrieves a list of all L<API::Discogs::ReleaseVersions> objects that are
-versions of a given master release ID, and pagination settings.
-
-=item filter-facets
-
-A list of L<API::Discogs::FilterFacet> objects associated with this object.
-
-=item filters
-
-A list of L<API::Discogs::Filter> objects associated with this object.
-
-=item first-page
-
-Returns the first page of the information of this object, or C<Nil> if
-already on the first page.
-
-=item first-page-url
-
-The URL to fetch the data of the B<first> page of this object using the
-Discogs API.  Returns C<Nil> if the there is only one page of information
-available.
-
-=item items
-
-An integer indicating the total number of L<API::Discogs::ReleaseVersion>
-objects there are available for this master release.
-
-=item last-page
-
-Returns the last page of the information of this object, or C<Nil> if
-already on the last page.
-
-=item last-page-url
-
-The URL to fetch the data of the B<last> page of this object using the
-Discogs API.  Returns C<Nil> if already on the last page.
-
-=item next-page
-
-Returns the next page of the information of this object, or C<Nil> if
-already on the last page.
-
-=item next-page-url
-
-The URL to fetch the data of the B<next> page of this object using the
-Discogs API.  Returns C<Nil> if already on the last page.
-
-=item page
-
-An integer indicating the page number of this object.
-
-=item pages
-
-An integer indicating the number of pages of information available for
-this object.
-
-=item pagination
-
-The L<API::Discogs::Pagination> object associted with this object.
-Usually not needed, as its information is available in shortcut methods.
-
-=item per-page
-
-An integer representing the maximum number of items on a page.
-
-=item previous-page
-
-Returns the previous page of the information of this object, or C<Nil> if
-already on the first page.
-
-=item previous-page-url
-
-The URL to fetch the data of the B<previous> page of this object using the
-Discogs API.  Returns C<Nil> if already on the first page.
-
-=item versions
-
-A list of L<API::Discogs::ReleaseVersion> objects.
 
 =head2 API::Discogs::SubLabel
 
