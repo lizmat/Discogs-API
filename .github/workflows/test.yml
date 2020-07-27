@@ -28,4 +28,4 @@ jobs:
         run: |
           zef install --/test --deps-only .
       - name: Run Tests
-        run: raku -I. t/01-basic
+        run: raku -I. t/01-basic.t
