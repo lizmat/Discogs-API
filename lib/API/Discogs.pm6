@@ -175,6 +175,9 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         $class.new(await $resp.body)
     }
 
+    multi method client(API::Discogs:U:) { $default-client }
+    multi method client(API::Discogs:D:) { $!client }
+
 #-------------- getting the information of a specific release -------------------
 
     our class Release does Hash2Class[
@@ -514,7 +517,7 @@ my $release = $discogs.release(249504);
 API::Discogs provides a Raku library with access to the L<Discogs|https://discogs.com>
 data and functions.
 
-=head1 METHODS
+=head1 UTILITY METHODS
 
 =head2 new
 
@@ -555,6 +558,38 @@ information.
 A string needed to access certain parts of the Discogs API.  See
 L<https://www.discogs.com/developers#page:authentication> for more
 information.
+
+=head2 client
+
+=begin code :lang<raku>
+
+my $default = API::Discogs.client;  # the default client
+
+my $client = $discogs.client;       # the actual client to be used
+
+=end code
+
+Return the default C<Cro::HTTP::Client> object when called as a class
+method.  That object will be used by default when creating a C<API::Discogs>
+object.  Intended to be used as a base for alterations, e.g. by
+overriding the C<GET> method during testing.
+
+Returns the actual object that was (implicitely) specified during the
+creation of the C<API::Discogs> object when called as an instance method.
+
+=head2 GET
+
+=begin code :lang<raku>
+
+my $content = $discogs.GET("/artists/108713", API::Discogs::Artist);
+
+=end code
+
+Helper method to fetch data using the Discogs API for the given URI,
+and interpret it as data of the given class.  Returns an instance of
+the given class, or throws if something went wrong.
+
+=head1 CONTENT METHODS
 
 =head2 artist
 
