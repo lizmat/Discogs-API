@@ -256,6 +256,12 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       release_id => { type => UInt, name => 'release-id' },
     ] { }
 
+    method release(API::Discogs:D:
+      UInt:D $id, AllowedCurrency:D :$currency = $.currency
+    --> Release:D) {
+        self.GET("/releases/$id?$currency", Release)
+    }
+
     multi method user-release-rating(API::Discogs:D:
       UInt:D $id, Username $username
     --> UserReleaseRating:D) {
@@ -586,6 +592,19 @@ A string needed to access certain parts of the Discogs API.  See
 L<https://www.discogs.com/developers#page:authentication> for more
 information.
 
+=item currency
+
+A string indicating the default currency to be used when producing
+prices of releases in the Discogs Marketplace.  It should be one of
+the following strings:
+
+  USD GBP EUR CAD AUD JPY CHF MXN BRL NZD SEK ZAR
+
+=item per-page
+
+An integer indicating the default number of items per page that should
+be produced by methods that return objects that support pagination.
+
 =head2 client
 
 =begin code :lang<raku>
@@ -700,12 +719,16 @@ them in pages in a L<API::Discogs::MasterReleaseVersions> object.
 
 =begin code :lang<raku>
 
-my $release = $discogs.release(249504);
+my $release = $discogs.release(249504, currency => "EUR");
 
 =end code
 
 Fetch the information for the given release ID and return that in
-an L<API::Discogs::Release> object.
+an L<API::Discogs::Release> object.  Optionally takes a named
+C<currency> parameter that should have one of the supported
+currency strings.  This defaults to the value for the currency
+that was (implicitely) specified when creating the C<API::Discogs>
+object.
 
 =head1 ADDITIONAL CLASSES
 
