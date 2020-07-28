@@ -282,7 +282,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         self.user-release-rating($id, $user.username)
     }
 
-    our class CommunityReleaseRating does Hash2Class[
+    our class CommunityReleaseRating does Hash2Class[ # OK
       rating     => Rating,
       release_id => { type => UInt, name => 'release-id' },
     ] { }
@@ -686,6 +686,23 @@ my $artist-releases = $discogs.artist-releases(
 Fetch all of the releases of given artist ID and return them in
 pages in a L<API::Discogs::ArtistReleases> object.
 
+=head2 community-release-rating
+
+=begin code :lang<raku>
+
+my $rating = $discogs.community-release-rating(249504);
+
+my $rating = $discogs.community-release-rating($release);
+
+=end code
+
+Fetch the information about the Discogs community rating for a
+given release and return that as an
+L<API::Discogs::CommunityReleaseRating> object.
+
+The release parameter can either be given as an unsigned integer,
+or as an L<API::Discogs::Release> object.
+
 =head2 label
 
 =begin code :lang<raku>
@@ -822,7 +839,7 @@ my $rating = $discogs.user-release-rating($release, $user);
 =end code
 
 Fetch the information about the rating for a given release and
-a username and return that as a L<API::Discogs::UserRating>
+a username and return that as a L<API::Discogs::UserReleaseRating>
 object.
 
 The release parameter can either be given as an unsigned integer,
@@ -1048,6 +1065,18 @@ The L<API::Discogs::User> object for the submitter of this release.
 =item want
 
 An integer indicating how many community members want to have this release.
+
+=head2 API::Discogs::CommunityReleaseRating
+
+The rating of the Discogs community for a specific release.
+
+=item rating
+
+A rational number indicating the rating.
+
+=item release-id
+
+An unsigned integer for the ID of the release.
 
 =head2 API::Discogs::Format
 
