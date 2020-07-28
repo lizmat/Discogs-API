@@ -54,7 +54,7 @@ my role PaginationShortcuts {  # does NeedsClient
 
     method !GET(Str:D $URL) {
         $URL
-          ?? self.client.GET($URL, self.WHAT)
+          ?? $.client.GET($URL, self.WHAT)
           !! $URL
     }
 
@@ -210,6 +210,38 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       per_page => { type => UInt, name => 'per-page' },
     ] { }
 
+#-------------- getting the information of a master release ---------------------
+
+    our class MasterRelease does Hash2Class[ # OK
+      '@artists'              => ArtistSummary,
+      '@genres'               => Genre,
+      '@images'               => Image,
+      '@styles'               => Style,
+      '@tracklist'            => Track,
+      '@videos'               => Video,
+      data_quality            => { type => Quality, name => 'data-quality' },
+      id                      => UInt,
+      lowest_price            => { type => Price, name => 'lowest-price' },
+      main_release            => { type => UInt, name => 'main-release' },
+      main_release_url        => { type => URL, name => 'main-release-url' },
+      most_recent_release     => { type => UInt,
+                                   name => 'most-recent-release' },
+      most_recent_release_url => { type => URL,
+                                   name => 'most-recent-release-url' },
+      num_for_sale            => { type => UInt, name => 'num-for-sale' },
+      resource_url            => { type => URL, name => 'resource-url' },
+      title                   => Str,
+      uri                     => URL,
+      versions_url            => { type => URL, name => 'versions-url' },
+      year                    => Year,
+    ] { }
+
+    method master-release(API::Discogs:D:
+      UInt:D $id
+    --> MasterRelease:D) {
+        self.GET("/masters/$id", MasterRelease)
+    }
+
 #-------------- getting the information of a specific release -------------------
 
     our class Release does Hash2Class[ # OK
@@ -242,13 +274,17 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       released          => Str,
       release_formatted => { type => Str, name => 'release-formatted' },
       resource_url      => { type => URL, name => 'resource-url' },
-    ] {
+    ] does NeedsClient {
         method average()      { $.community.rating.average }
         method contributors() { $.community.contributors   }
         method count()        { $.community.rating.count   }
         method have()         { $.community.have           }
         method submitter()    { $.community.submitter      }
         method want()         { $.community.have           }
+
+        method master-release(--> API::Discogs::MasterRelease:D) {
+            $.client.master-release($.master-id)
+        }
     }
 
     method release(API::Discogs:D:
@@ -300,38 +336,6 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       Release:D $release
     --> CommunityReleaseRating:D) {
         self.community-release-rating($release.id)
-    }
-
-#-------------- getting the information of a master release ---------------------
-
-    our class MasterRelease does Hash2Class[ # OK
-      '@artists'              => ArtistSummary,
-      '@genres'               => Genre,
-      '@images'               => Image,
-      '@styles'               => Style,
-      '@tracklist'            => Track,
-      '@videos'               => Video,
-      data_quality            => { type => Quality, name => 'data-quality' },
-      id                      => UInt,
-      lowest_price            => { type => Price, name => 'lowest-price' },
-      main_release            => { type => UInt, name => 'main-release' },
-      main_release_url        => { type => URL, name => 'main-release-url' },
-      most_recent_release     => { type => UInt,
-                                   name => 'most-recent-release' },
-      most_recent_release_url => { type => URL,
-                                   name => 'most-recent-release-url' },
-      num_for_sale            => { type => UInt, name => 'num-for-sale' },
-      resource_url            => { type => URL, name => 'resource-url' },
-      title                   => Str,
-      uri                     => URL,
-      versions_url            => { type => URL, name => 'versions-url' },
-      year                    => Year,
-    ] { }
-
-    method master-release(API::Discogs:D:
-      UInt:D $id
-    --> MasterRelease:D) {
-        self.GET("/masters/$id", MasterRelease)
     }
 
 #-------------- getting the versions of a master release ------------------------

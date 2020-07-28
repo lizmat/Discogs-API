@@ -1067,6 +1067,10 @@ available in the Discogs Marketplace in the currency that was
 The integer value of the L<API::Discogs::MasterRelease> id of this
 release.
 
+=item master-release
+
+Fetch the associated L<API::Discogs::MasterRelease> object.
+
 =item master-url
 
 The URL to fetch the master release of this release using the
