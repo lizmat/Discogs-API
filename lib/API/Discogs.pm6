@@ -126,7 +126,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       count   => Int,
     ] { }
 
-    our class User does Hash2Class[
+    our class User does Hash2Class[ # OK
       resource_url => { type => URL, name => 'resource-url' },
       username     => Username,
     ] { }
@@ -141,22 +141,22 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       want            => Int,
     ] { }
 
-    our class CatalogEntry does Hash2Class[
+    our class CatalogEntry does Hash2Class[ # OK
       catno            => Str,
-      entity_type      => { type => Int, name => 'entity_type' },
+      entity_type      => { type => Int, name => 'entity-type' },
       entity_type_name => { type => Str, name => 'entity-type-name' },
       id               => UInt,
       name             => Str,
       resource_url => { type => URL, name => 'resource-url' },
     ] { }
 
-    our class Format does Hash2Class[
+    our class Format does Hash2Class[ # OK
       '@descriptions' => Str,
       name            => Str,
       qty             => Int,
     ] { }
 
-    our class Identifier does Hash2Class[
+    our class Identifier does Hash2Class[ # OK
       type  => Str,
       value => Str,
     ] { }
@@ -192,7 +192,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       resource_url => { type => URL, name => 'resource-url' },
     ] { }
 
-    our class Value does Hash2Class[
+    our class Value does Hash2Class[ # OK
       count => Int,
       title => Str,
       value => Str,
@@ -952,6 +952,36 @@ A string indicating the role of this artist.
 
 A string indicating the tracks on which the artist participated.
 
+=head2 API::Discogs::CatalogEntry
+
+An object that describes entities in the Discogs database that are also
+referred to as C<Label>s.  Usually created indirectly by other objects.
+
+=item catno
+
+A string with the identifying catalog number.
+
+=item entity-type-name
+
+A string with the name of this entity.
+
+=item entity-type
+
+A string with a description of the type of this entity.
+
+=item id
+
+The numeric ID of this catalog entry.
+
+=item name
+
+The name of this catalog entry.
+
+=item resource-url
+
+The URL to fetch the full information of this catalog entry using
+the Discogs API.
+
 =head2 API::Discogs::Community
 
 Usually obtained indirectly from the C<community> method on the
@@ -989,7 +1019,40 @@ The L<API::Discogs::User> object for the submitter of this release.
 
 An integer indicating how many community members want to have this release.
 
+=head2 API::Discogs::Format
+
+An object that describes the format of a release.  Usually created by
+other objects.
+
+=item descriptions
+
+A list of strings describing this format.
+
+=item name
+
+The name of this format.
+
+=item qty
+
+An integer indicating the number of copies that are available in this
+format in the Discogs Marketplace.
+
+=head2 API::Discogs::Identifier
+
+A generic object created by other objects.
+
+=item type
+
+A string indicating the type.
+
+=item value
+
+A string indicating the value.
+
 =head2 API::Discogs::Image
+
+An object describing an image in the Discogs database.  Usually created
+by other objects.
 
 =item height
 
@@ -1675,6 +1738,35 @@ A string containing the title of this track.
 =item type
 
 A string to indicate the type of track, usually "track".
+
+=head2 API::Discogs::User
+
+This object is usually created as part of other C<API::Discogs> objects.
+
+=item resource-url
+
+The URL to get the full L<API::Discogs::User> information of this
+user using the Discogs API.
+
+=item username
+
+The string with which the Discogs user is identified.
+
+=head2 API::Discogs::Value
+
+A generic object created by other objects.
+
+=item count
+
+An integer indicating an amount.
+
+=item title
+
+A string for the title of this object.
+
+=item value
+
+A string indicating the value of this object.
 
 =head2 API::Discogs::Video
 
