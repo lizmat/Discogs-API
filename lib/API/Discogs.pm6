@@ -247,27 +247,19 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         method want()         { $.community.have           }
     }
 
-    our class Stats does Hash2Class[
-      in_collection => { type => Int, name => 'in-collection' },
-      in_wantlist   => { type => Int, name => 'in-wantlist' },
-    ] { }
-
-    our class UserReleaseRating does Hash2Class[
-      rating      => ValidRating,
-      release     => UInt,
-      username    => Username,
-    ] { }
-
-    our class CommunityReleaseRating does Hash2Class[
-      rating     => Rating,
-      release_id => { type => UInt, name => 'release-id' },
-    ] { }
-
     method release(API::Discogs:D:
       UInt:D $id, AllowedCurrency:D :$currency = $.currency
     --> Release:D) {
         self.GET("/releases/$id?$currency", Release)
     }
+
+#-------------- getting the rating of a specific release -----------------------
+
+    our class UserReleaseRating does Hash2Class[ # OK
+      rating      => ValidRating,
+      release     => UInt,
+      username    => Username,
+    ] { }
 
     multi method user-release-rating(API::Discogs:D:
       UInt:D $id, Username $username
@@ -279,6 +271,21 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     --> UserReleaseRating:D) {
         self.user-release-rating($release.id, $username)
     }
+    multi method user-release-rating(API::Discogs:D:
+      Release:D $release, User:D $user
+    --> UserReleaseRating:D) {
+        self.user-release-rating($release.id, $user.username)
+    }
+    multi method user-release-rating(API::Discogs:D:
+      UInt:D $id, User:D $user
+    --> UserReleaseRating:D) {
+        self.user-release-rating($id, $user.username)
+    }
+
+    our class CommunityReleaseRating does Hash2Class[
+      rating     => Rating,
+      release_id => { type => UInt, name => 'release-id' },
+    ] { }
 
     multi method community-release-rating(API::Discogs:D:
       UInt:D $id
@@ -323,7 +330,12 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         self.GET("/masters/$id", MasterRelease)
     }
 
-#-------------- getting the versions of a release -------------------------------
+#-------------- getting the versions of a master release ------------------------
+
+    our class Stats does Hash2Class[
+      in_collection => { type => Int, name => 'in-collection' },
+      in_wantlist   => { type => Int, name => 'in-wantlist' },
+    ] { }
 
     our class FilterFacet does Hash2Class[
       '@values'              => Value,
@@ -794,6 +806,28 @@ C<currency> parameter that should have one of the supported
 currency strings.  This defaults to the value for the currency
 that was (implicitely) specified when creating the C<API::Discogs>
 object.
+
+=head2 user-release-rating
+
+=begin code :lang<raku>
+
+my $rating = $discogs.user-release-rating(249504, "username");
+
+my $rating = $discogs.user-release-rating($release, "username");
+
+my $rating = $discogs.user-release-rating(249504, $user);
+
+my $rating = $discogs.user-release-rating($release, $user);
+
+=end code
+
+Fetch the information about the rating for a given release and
+a username and return that as a L<API::Discogs::UserRating>
+object.
+
+The release parameter can either be given as an unsigned integer,
+or as an L<API::Discogs::Release> object.  The user parameter can
+either be given as a string, or as an L<API::Discogs::User> object.
 
 =head1 ADDITIONAL CLASSES
 
@@ -1747,6 +1781,22 @@ user using the Discogs API.
 =item username
 
 The string with which the Discogs user is identified.
+
+=head2 API::Discogs::UserReleaseRating
+
+Provide the rating a user has given a release.
+
+=item rating
+
+An unsigned integerr with the rating by this user for a release.
+
+=item release
+
+An unsigned integer for the release ID.
+
+=item username
+
+A string for the username.
 
 =head2 API::Discogs::Value
 
