@@ -70,6 +70,45 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     has Str $.key;
     has Str $!secret is built;
 
+#--------------- the specific methods one can call -----------------------------
+
+    # helper method for setting pagination parameters
+    method !pagination(%nameds --> Str:D) {
+        my UInt $page     := %nameds<page>:delete     // 1;
+        my UInt $per-page := %nameds<per-page>:delete // $.per-page;
+        "page=$page&per_page=$per-page"
+    }
+
+    # helper method for gathering named parameters
+    method !gather-nameds(%nameds, @keys --> Str:D) {
+        my str @text;
+        for @keys -> $key {
+            if %nameds{$key}:delete -> $value {
+                @text.push("$key.subst('-','_',:g)='$value'")
+            }
+        }
+        @text.join('&')
+    }
+
+    # main worker for creating non-asynchronous work
+    method GET(API::Discogs:D: $uri, $class) {
+        my @headers;
+        @headers.push((Authorization => "Discogs key=$.key, secret=$!secret"))
+          if $!secret && $.key;
+        @headers.push((Authorization => "Discogs token=$!token"))
+          if $!token;
+
+        my $resp := await $.client.get($uri, :@headers);
+        my $object := $class.new(await $resp.body);
+
+        $object.client = self if $class ~~ PaginationShortcuts;
+        $object
+    }
+
+    # accessing the Cro::HTTP::Client
+    multi method client(API::Discogs:U:) { $default-client }
+    multi method client(API::Discogs:D:) { $!client }
+
 #--------------- supporting classes derived from the JSON API ------------------
 
     our class ArtistSummary does Hash2Class[ # OK
@@ -166,45 +205,6 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       pages    => UInt,
       per_page => { type => UInt, name => 'per-page' },
     ] { }
-
-#--------------- the specific methods one can call -----------------------------
-
-    # helper method for setting pagination parameters
-    method !pagination(%nameds --> Str:D) {
-        my UInt $page     := %nameds<page>:delete     // 1;
-        my UInt $per-page := %nameds<per-page>:delete // $.per-page;
-        "page=$page&per_page=$per-page"
-    }
-
-    # helper method for gathering named parameters
-    method !gather-nameds(%nameds, @keys --> Str:D) {
-        my str @text;
-        for @keys -> $key {
-            if %nameds{$key}:delete -> $value {
-                @text.push("$key.subst('-','_',:g)='$value'")
-            }
-        }
-        @text.join('&')
-    }
-
-    # main worker for creating non-asynchronous work
-    method GET(API::Discogs:D: $uri, $class) {
-        my @headers;
-        @headers.push((Authorization => "Discogs key=$.key, secret=$!secret"))
-          if $!secret && $.key;
-        @headers.push((Authorization => "Discogs token=$!token"))
-          if $!token;
-
-        my $resp := await $.client.get($uri, :@headers);
-        my $object := $class.new(await $resp.body);
-
-        $object.client = self if $class ~~ PaginationShortcuts;
-        $object
-    }
-
-    # accessing the Cro::HTTP::Client
-    multi method client(API::Discogs:U:) { $default-client }
-    multi method client(API::Discogs:D:) { $!client }
 
 #-------------- getting the information of a specific release -------------------
 
