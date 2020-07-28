@@ -1,4 +1,4 @@
-#--------------- external modules ----------------------------------------------
+#--------------  external modules ----------------------------------------------
 
 use Hash2Class;
 use Cro::HTTP::Client;
@@ -35,8 +35,12 @@ subset Year of UInt where $_ > 1900 && $_ <= 2100;
 
 #--------------- useful roles --------------------------------------------------
 
-my role PaginationShortcuts {
+# for methods that need the original client
+my role NeedsClient {
     has $.client is rw;
+}
+
+my role PaginationShortcuts {  # does NeedsClient
 
     method first-page-url(::?CLASS:D:)    { $.pagination.urls<first> // Nil }
     method next-page-url(::?CLASS:D:)     { $.pagination.urls<next>  // Nil }
@@ -101,7 +105,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         my $resp := await $.client.get($uri, :@headers);
         my $object := $class.new(await $resp.body);
 
-        $object.client = self if $class ~~ PaginationShortcuts;
+        $object.client = self if $class ~~ NeedsClient;
         $object
     }
 
@@ -370,7 +374,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       '@filters'       => Filters,
       '@versions'      => MasterReleaseVersion,
       pagination       => Pagination,
-    ] does PaginationShortcuts { }
+    ] does NeedsClient does PaginationShortcuts { }
 
     method master-release-versions(API::Discogs:D:
       UInt:D $id,
@@ -430,7 +434,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class LabelReleases does Hash2Class[ # OK
       '@releases' => LabelRelease,
       pagination  => Pagination,
-    ] does PaginationShortcuts { }
+    ] does NeedsClient does PaginationShortcuts { }
 
     method label-releases(API::Discogs:D:
       UInt:D $id
@@ -483,7 +487,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class ArtistReleases does Hash2Class[ # OK
       '@releases' => ArtistRelease,
       pagination  => Pagination,
-    ] does PaginationShortcuts { }
+    ] does NeedsClient does PaginationShortcuts { }
 
     method artist-releases(API::Discogs:D:
       UInt:D $id
@@ -512,7 +516,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class SearchResults does Hash2Class[ # OK
       '@results' => SearchResult,
       pagination => Pagination,
-    ] does PaginationShortcuts { }
+    ] does NeedsClient does PaginationShortcuts { }
 
     method search(API::Discogs:D: *%_ --> SearchResults:D) {
         my str @params = self!pagination(%_);
