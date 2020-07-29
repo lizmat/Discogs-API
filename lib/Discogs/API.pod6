@@ -2,13 +2,13 @@
 
 =head1 NAME
 
-API::Discogs - Provide basic API to Discogs
+Discogs::API - Provide basic API to Discogs
 
 =head1 SYNOPSIS
 
 =begin code :lang<raku>
 
-use API::Discogs;
+use Discogs::API;
 my $discogs = Discogs.new;
 
 my $release = $discogs.release(249504);
@@ -17,7 +17,7 @@ my $release = $discogs.release(249504);
 
 =head1 DESCRIPTION
 
-API::Discogs provides a Raku library with access to the
+Discogs::API provides a Raku library with access to the
 L<Discogs|https://discogs.com> data and functions.  It tries to follow
 the API as closely as possible, so the up-to-date
 L<Discogs developer information|https://www.discogs.com/developers>
@@ -89,25 +89,25 @@ be produced by methods that return objects that support pagination.
 
 =begin code :lang<raku>
 
-my $default = API::Discogs.client;  # the default client
+my $default = Discogs::API.client;  # the default client
 
 my $client = $discogs.client;       # the actual client to be used
 
 =end code
 
 Return the default C<Cro::HTTP::Client> object when called as a class
-method.  That object will be used by default when creating a C<API::Discogs>
+method.  That object will be used by default when creating a C<Discogs::API>
 object.  Intended to be used as a base for alterations, e.g. by
 overriding the C<GET> method during testing.
 
 Returns the actual object that was (implicitely) specified during the
-creation of the C<API::Discogs> object when called as an instance method.
+creation of the C<Discogs::API> object when called as an instance method.
 
 =head2 GET
 
 =begin code :lang<raku>
 
-my $content = $discogs.GET("/artists/108713", API::Discogs::Artist);
+my $content = $discogs.GET("/artists/108713", Discogs::API::Artist);
 
 =end code
 
@@ -126,7 +126,7 @@ my $artist = $discogs.artist(108713);
 =end code
 
 Fetch the information for the given artist ID and return that in
-an L<API::Discogs::Artist> object.
+an L<Discogs::API::Artist> object.
 
 =head2 artist-releases
 
@@ -144,7 +144,7 @@ my $artist-releases = $discogs.artist-releases(
 =end code
 
 Fetch all of the releases of given artist ID and return them in
-pages in a L<API::Discogs::ArtistReleases> object.
+pages in a L<Discogs::API::ArtistReleases> object.
 
 =item page
 
@@ -155,7 +155,7 @@ objects of.  Defaults to 1.
 
 An integer indicating the maximum number of items per page to be
 produced.  Defaults to what was (implicitely) specified with the
-creation of the C<API::Discogs> object.
+creation of the C<Discogs::API> object.
 
 =item sort
 
@@ -184,10 +184,10 @@ my $rating = $discogs.community-release-rating($release);
 
 Fetch the information about the Discogs community rating for a
 given release and return that as an
-L<API::Discogs::CommunityReleaseRating> object.
+L<Discogs::API::CommunityReleaseRating> object.
 
 The release parameter can either be given as an unsigned integer,
-or as an L<API::Discogs::Release> object.
+or as an L<Discogs::API::Release> object.
 
 =head2 label
 
@@ -198,7 +198,7 @@ my $label = $discogs.label(1);
 =end code
 
 Fetch the information for the given label ID and return that in
-an L<API::Discogs::Label> object.
+an L<Discogs::API::Label> object.
 
 =head2 label-releases
 
@@ -213,7 +213,7 @@ my $label-releases = $discogs.label-releases(
 =end code
 
 Fetch all of the releases of given label ID and return them in
-pages in a L<API::Discogs::LabelReleases> object.
+pages in a L<Discogs::API::LabelReleases> object.
 
 =head2 master-release
 
@@ -224,7 +224,7 @@ my $master-release = $discogs.master-release(1000);
 =end code
 
 Fetch the information for the given master release ID and return
-that in an L<API::Discogs::MasterRelease> object.
+that in an L<Discogs::API::MasterRelease> object.
 
 =head2 master-release-versions
 
@@ -246,7 +246,7 @@ my $master-release-versions = $discogs.master-release-versions(
 =end code
 
 Fetch all of the versions of a given master release ID and return
-them in pages in a L<API::Discogs::MasterReleaseVersions> object.  It
+them in pages in a L<Discogs::API::MasterReleaseVersions> object.  It
 supports the following optional named parameters:
 
 =item page
@@ -258,7 +258,7 @@ objects of.  Defaults to 1.
 
 An integer indicating the maximum number of items per page to be
 produced.  Defaults to what was (implicitely) specified with the
-creation of the C<API::Discogs> object.
+creation of the C<Discogs::API> object.
 
 =item format
 
@@ -304,16 +304,16 @@ my $release = $discogs.release(249504, currency => "EUR");
 =end code
 
 Fetch the information for the given release ID and return that in
-an L<API::Discogs::Release> object.  Optionally takes a named
+an L<Discogs::API::Release> object.  Optionally takes a named
 C<currency> parameter that should have one of the supported
 currency strings.  This defaults to the value for the currency
-that was (implicitely) specified when creating the C<API::Discogs>
+that was (implicitely) specified when creating the C<Discogs::API>
 object.
 
 =head2 search
 
 Perform a general search in the Discogs database, optionally searching
-specific parts.  Returns a L<API::Discogs::SearchResults> object.
+specific parts.  Returns a L<Discogs::API::SearchResults> object.
 
 =begin code :lang<raku>
 
@@ -346,14 +346,14 @@ my $search = $discogs.search(
 
 =item page
 
-An integer indicating the page to obtain the C<API::Discogs::SearchResult>
+An integer indicating the page to obtain the C<Discogs::API::SearchResult>
 objects of.  Defaults to 1.
 
 =item per-page
 
 An integer indicating the maximum number of items per page to be
 produced.  Defaults to what was (implicitely) specified with the
-creation of the C<API::Discogs> object.
+creation of the C<Discogs::API> object.
 
 =item query
 
@@ -445,18 +445,18 @@ my $rating = $discogs.user-release-rating($release, $user);
 =end code
 
 Fetch the information about the rating for a given release and
-a username and return that as a L<API::Discogs::UserReleaseRating>
+a username and return that as a L<Discogs::API::UserReleaseRating>
 object.
 
 The release parameter can either be given as an unsigned integer,
-or as an L<API::Discogs::Release> object.  The user parameter can
-either be given as a string, or as an L<API::Discogs::User> object.
+or as an L<Discogs::API::Release> object.  The user parameter can
+either be given as a string, or as an L<Discogs::API::User> object.
 
 =head1 ADDITIONAL CLASSES
 
 In alphatical order:
 
-=head2 API::Discogs::Artist
+=head2 Discogs::API::Artist
 
 =item data-quality
 
@@ -468,11 +468,11 @@ The artist ID.
 
 =item images
 
-A list of L<API::Discogs::Image> objects for this artist.
+A list of L<Discogs::API::Image> objects for this artist.
 
 =item members
 
-A list of L<API::Discogs::Member> objects of this artist.
+A list of L<Discogs::API::Member> objects of this artist.
 
 =item name
 
@@ -502,9 +502,9 @@ The URL to access information about this artist on the Discogs website.
 
 A list of URLs associated with this artist.
 
-=head2 API::Discogs::ArtistReleases
+=head2 Discogs::API::ArtistReleases
 
-This object is usually created as part of a L<API::Discogs::ArtistReleases>
+This object is usually created as part of a L<Discogs::API::ArtistReleases>
 object.
 
 =item artist
@@ -531,7 +531,7 @@ The ID of this release.
 
 =item label
 
-The ID of the associated C<API::Discogs::Label> object.
+The ID of the associated C<Discogs::API::Label> object.
 
 =item resource-url
 
@@ -540,11 +540,11 @@ The URL to obtain the information about this release using the Discogs API.
 =item role
 
 A string indicating the role of this release compared to its
-L<API::Discogs::MasterRelease> object.
+L<Discogs::API::MasterRelease> object.
 
 =item stats
 
-An L<API::Discogs::Stats> object with user and community statistics.  It is
+An L<Discogs::API::Stats> object with user and community statistics.  It is
 probably easier to use the short-cut methods C<community-in-collection>,
 C<community-in-wantlist>, C<user-in-collection>, C<user-in-wantlist>.
 
@@ -576,9 +576,9 @@ A boolean indicating whether the current user wants to have this release.
 
 An unsigned integer for the year this release was released.
 
-=head2 API::Discogs::ArtistReleases
+=head2 Discogs::API::ArtistReleases
 
-Retrieves a list of all L<API::Discogs::ArtistRelease> objects that were
+Retrieves a list of all L<Discogs::API::ArtistRelease> objects that were
 made by the given artist ID, and pagination settings.
 
 =item first-page
@@ -594,7 +594,7 @@ available.
 
 =item items
 
-An integer indicating the total number of L<API::Discogs::LabelRelease>
+An integer indicating the total number of L<Discogs::API::LabelRelease>
 objects there are available for this artist.
 
 =item last-page
@@ -628,7 +628,7 @@ this object.
 
 =item pagination
 
-The L<API::Discogs::Pagination> object associted with this object.
+The L<Discogs::API::Pagination> object associted with this object.
 Usually not needed, as its information is available in shortcut methods.
 
 =item per-page
@@ -647,9 +647,9 @@ Discogs API.  Returns C<Nil> if already on the first page.
 
 =item releases
 
-A list of L<API::Discogs::ArtistRelease> objects.
+A list of L<Discogs::API::ArtistRelease> objects.
 
-=head2 API::Discogs::ArtistSummary
+=head2 Discogs::API::ArtistSummary
 
 =item anv
 
@@ -679,7 +679,7 @@ A string indicating the role of this artist.
 
 A string indicating the tracks on which the artist participated.
 
-=head2 API::Discogs::CatalogEntry
+=head2 Discogs::API::CatalogEntry
 
 An object that describes entities in the Discogs database that are also
 referred to as C<Label>s.  Usually created indirectly by other objects.
@@ -709,16 +709,16 @@ The name of this catalog entry.
 The URL to fetch the full information of this catalog entry using
 the Discogs API.
 
-=head2 API::Discogs::Community
+=head2 Discogs::API::Community
 
 Usually obtained indirectly from the C<community> method on the
-L<API::Discogs::Release> object.  These methods can also be called
-directly on the L<API::Discogs::Release> object, as these are also
+L<Discogs::API::Release> object.  These methods can also be called
+directly on the L<Discogs::API::Release> object, as these are also
 provided as shortcuts.
 
 =item contributors
 
-A list of L<API::Discogs::User> objects of contributors to the
+A list of L<Discogs::API::User> objects of contributors to the
 community information of this release.
 
 =item data-quality
@@ -740,13 +740,13 @@ The status of the information about this release in the community.
 
 =item submitter
 
-The L<API::Discogs::User> object for the submitter of this release.
+The L<Discogs::API::User> object for the submitter of this release.
 
 =item want
 
 An integer indicating how many community members want to have this release.
 
-=head2 API::Discogs::CommunityReleaseRating
+=head2 Discogs::API::CommunityReleaseRating
 
 The rating of the Discogs community for a specific release.
 
@@ -758,9 +758,9 @@ A rational number indicating the rating.
 
 An unsigned integer for the ID of the release.
 
-=head2 API::Discogs::FilterFacet
+=head2 Discogs::API::FilterFacet
 
-An object usually created as part of the L<API::Discogs::MasterReleaseVersions>
+An object usually created as part of the L<Discogs::API::MasterReleaseVersions>
 object.
 
 =item allows-multiple-values
@@ -779,20 +779,20 @@ The title.
 
 A list of one or more values.
 
-=head2 API::Discogs::Filters
+=head2 Discogs::API::Filters
 
-An object usually created as part of the L<API::Discogs::MasterReleaseVersions>
+An object usually created as part of the L<Discogs::API::MasterReleaseVersions>
 object.
 
 =item applied
 
-A hash indicating which L<API::Discogs::FilterFacet>s have been applied.
+A hash indicating which L<Discogs::API::FilterFacet>s have been applied.
 
 =item available
 
 A hash of unsigned integer indicating how many entries are available.
 
-=head2 API::Discogs::Format
+=head2 Discogs::API::Format
 
 An object that describes the format of a release.  Usually created by
 other objects.
@@ -810,7 +810,7 @@ The name of this format.
 An integer indicating the number of copies that are available in this
 format in the Discogs Marketplace.
 
-=head2 API::Discogs::Identifier
+=head2 Discogs::API::Identifier
 
 A generic object created by other objects.
 
@@ -822,7 +822,7 @@ A string indicating the type.
 
 A string indicating the value.
 
-=head2 API::Discogs::Image
+=head2 Discogs::API::Image
 
 An object describing an image in the Discogs database.  Usually created
 by other objects.
@@ -852,11 +852,11 @@ image website.
 
 The width of the image in pixels.
 
-=head2 API::Discogs::Label
+=head2 Discogs::API::Label
 
 The C<Label> object represents a label, company, recording studio,
-location, or other entity involved with L<API::Discogs::Artist>s and
-L<API::Discogs::Release>s.  Labels were recently expanded in scope
+location, or other entity involved with L<Discogs::API::Artist>s and
+L<Discogs::API::Release>s.  Labels were recently expanded in scope
 to include things that aren't labels – the name is an artifact of this
 history.
 
@@ -874,7 +874,7 @@ The ID of this label.
 
 =item images
 
-A list of L<API::Discogs::Image> objects for this label.
+A list of L<Discogs::API::Image> objects for this label.
 
 =item name
 
@@ -886,7 +886,7 @@ A string with a profile about this label.
 
 =item releases-url
 
-A URL to retrieve all the L<API::Discogs::Release> objects associated
+A URL to retrieve all the L<Discogs::API::Release> objects associated
 with this label using the Discogs API.
 
 =item resource-url
@@ -895,7 +895,7 @@ The URL to obtain the information about this label using the Discogs API.
 
 =item sublabels
 
-A list of L<API::Discogs::SubLabel> objects describing subdivisions of this label.
+A list of L<Discogs::API::SubLabel> objects describing subdivisions of this label.
 
 =item uri
 
@@ -905,9 +905,9 @@ A URL to see the information of this label on the Discogs website.
 
 A list of URLs related to this label.
 
-=head2 API::Discogs::LabelRelease
+=head2 Discogs::API::LabelRelease
 
-This object is usually created as part of a L<API::Discogs::LabelReleases>
+This object is usually created as part of a L<Discogs::API::LabelReleases>
 object.
 
 =item artist
@@ -947,9 +947,9 @@ A string for the title of this release.
 
 An unsigned integer indicating the year this release was released.
 
-=head2 API::Discogs::LabelReleases
+=head2 Discogs::API::LabelReleases
 
-Retrieves a list of all L<API::Discogs::LabelRelease> objects that are
+Retrieves a list of all L<Discogs::API::LabelRelease> objects that are
 versions of a given master release ID, and pagination settings.
 
 =item first-page
@@ -965,7 +965,7 @@ available.
 
 =item items
 
-An integer indicating the total number of L<API::Discogs::LabelRelease>
+An integer indicating the total number of L<Discogs::API::LabelRelease>
 objects there are available for label.
 
 =item last-page
@@ -999,7 +999,7 @@ this object.
 
 =item pagination
 
-The L<API::Discogs::Pagination> object associted with this object.
+The L<Discogs::API::Pagination> object associted with this object.
 Usually not needed, as its information is available in shortcut methods.
 
 =item per-page
@@ -1018,17 +1018,17 @@ Discogs API.  Returns C<Nil> if already on the first page.
 
 =item releases
 
-A list of L<API::Discogs::LabelRelease> objects.
+A list of L<Discogs::API::LabelRelease> objects.
 
-=head2 API::Discogs::MasterRelease
+=head2 Discogs::API::MasterRelease
 
 The MasterRelease object represents a set of similar
-L<API::Discogs::Release>s.  Master releases have a "main release"
+L<Discogs::API::Release>s.  Master releases have a "main release"
 which is often the chronologically earliest.
 
 =item artists
 
-A list of L<API::Discogs::ArtistSummary> objects for this master release.
+A list of L<Discogs::API::ArtistSummary> objects for this master release.
 
 =item data-quality
 
@@ -1036,12 +1036,12 @@ A string describing the quality of the data of this master release.
 
 =item fetch-main-release
 
-Fetch the main L<API::Discogs::Release> of this main release
+Fetch the main L<Discogs::API::Release> of this main release
 using the Discogs API.
 
 =item fetch-most-recent-release
 
-Fetch the most recent L<API::Discogs::Release> of this main release
+Fetch the most recent L<Discogs::API::Release> of this main release
 using the Discogs API.
 
 =item genres
@@ -1054,17 +1054,17 @@ The ID of this master release.
 
 =item images
 
-A list if L<API::Discogs::Image> objects associated with this master release.
+A list if L<Discogs::API::Image> objects associated with this master release.
 
 =item lowest-price
 
 The lowest price seen for any of the releases of this master release
 on the Discogs Marketplace, in the currency that was (implicitely)
-specified when the L<API::Discogs> object was made.
+specified when the L<Discogs::API> object was made.
 
 =item main-release
 
-The ID of the L<API::Discogs::Release> object that is considered to
+The ID of the L<Discogs::API::Release> object that is considered to
 be the main release.
 
 =item main-release-url
@@ -1073,7 +1073,7 @@ The URL to access the data of the main release using the Discogs API.
 
 =item most-recent-release
 
-The ID of the L<API::Discogs::Release> object that is considered to
+The ID of the L<Discogs::API::Release> object that is considered to
 be the most recent release.
 
 =item most-recent-release-url
@@ -1101,7 +1101,7 @@ A string with the title of this master release.
 
 =item tracklist
 
-A list of L<API::Discogs::Track> objects describing the tracks of this master
+A list of L<Discogs::API::Track> objects describing the tracks of this master
 release.
 
 =item uri
@@ -1111,26 +1111,26 @@ website.
 
 =item versions-url
 
-A URL to fetch the L<API::Discogs::MasterReleaseVersion> objects for this
+A URL to fetch the L<Discogs::API::MasterReleaseVersion> objects for this
 master release using the Discogs API.
 
 =item videos
 
-A list of L<API::Discogs::Video> objects associated with this master
+A list of L<Discogs::API::Video> objects associated with this master
 release.
 
 =item year
 
 An integer for the year in which this master release was released.
 
-=head2 API::Discogs::MasterReleaseVersion
+=head2 Discogs::API::MasterReleaseVersion
 
 This object is usually created as part of the
-L<API::Discogs::MasterReleaseVersions> object.
+L<Discogs::API::MasterReleaseVersions> object.
 
 =item catno
 
-The catalog number of the associated L<API::Discogs::CatalogEntry> object.
+The catalog number of the associated L<Discogs::API::CatalogEntry> object.
 
 =item community-in-collection
 
@@ -1156,7 +1156,7 @@ The ID of this release.
 
 =item label
 
-The ID of the associated C<API::Discogs::Label> object.
+The ID of the associated C<Discogs::API::Label> object.
 
 =item major-formats
 
@@ -1172,7 +1172,7 @@ The URL to obtain the information about this release using the Discogs API.
 
 =item stats
 
-An L<API::Discogs::Stats> object with user and community statistics.  It is
+An L<Discogs::API::Stats> object with user and community statistics.  It is
 probably easier to use the short-cut methods C<community-in-collection>,
 C<community-in-wantlist>, C<user-in-collection>, C<user-in-wantlist>.
 
@@ -1197,18 +1197,18 @@ An unsigned integer indicating whether the current user has this release.
 An unsigned integer indicating whether the current user wants to have this
 release.
 
-=head2 API::Discogs::MasterReleaseVersions
+=head2 Discogs::API::MasterReleaseVersions
 
-Retrieves a list of all L<API::Discogs::MasterReleaseVersion> objects that are
+Retrieves a list of all L<Discogs::API::MasterReleaseVersion> objects that are
 versions of a given master release ID, and pagination settings.
 
 =item filter-facets
 
-A list of L<API::Discogs::FilterFacet> objects associated with this object.
+A list of L<Discogs::API::FilterFacet> objects associated with this object.
 
 =item filters
 
-A list of L<API::Discogs::Filter> objects associated with this object.
+A list of L<Discogs::API::Filter> objects associated with this object.
 
 =item first-page
 
@@ -1223,7 +1223,7 @@ available.
 
 =item items
 
-An integer indicating the total number of L<API::Discogs::MasterReleaseVersion>
+An integer indicating the total number of L<Discogs::API::MasterReleaseVersion>
 objects there are available for this master release.
 
 =item last-page
@@ -1257,7 +1257,7 @@ this object.
 
 =item pagination
 
-The L<API::Discogs::Pagination> object associted with this object.
+The L<Discogs::API::Pagination> object associted with this object.
 Usually not needed, as its information is available in shortcut methods.
 
 =item per-page
@@ -1276,18 +1276,18 @@ Discogs API.  Returns C<Nil> if already on the first page.
 
 =item versions
 
-A list of L<API::Discogs::MasterReleaseVersion> objects.
+A list of L<Discogs::API::MasterReleaseVersion> objects.
 
-=head2 API::Discogs::Member
+=head2 Discogs::API::Member
 
 =item active
 
 A Boolean indicating whether this member is still active with the
-L<API::Discogs::Artist> it is associated with.
+L<Discogs::API::Artist> it is associated with.
 
 =item id
 
-The ID of this member as a separate L<API::Discogs::Artist>.
+The ID of this member as a separate L<Discogs::API::Artist>.
 
 =item name
 
@@ -1295,10 +1295,10 @@ The name of this member.
 
 =item resource-url
 
-The URL to fetch L<API::Discogs::Artist> object of this member using
+The URL to fetch L<Discogs::API::Artist> object of this member using
 the Discogs API.
 
-=head2 API::Discogs::Pagination
+=head2 Discogs::API::Pagination
 
 This object is usually created as part of some kind of search result that
 allows for pagination.
@@ -1326,28 +1326,28 @@ A hash of URLs for moving between pages.  Usually accessed with
 shortcut methods of the object incorporating this C<Pagination>
 object.
 
-=head2 API::Discogs::Rating
+=head2 Discogs::API::Rating
 
-A rating, usually automatically created with a L<API::Discogs::Community>
+A rating, usually automatically created with a L<Discogs::API::Community>
 object.
 
 =item average
 
 A rational value indicating the average rating of the object associated
-with the associated L<API::Discogs::Community> object.
+with the associated L<Discogs::API::Community> object.
 
 =item count
 
 An integer value indicating the number of votes cast by community members.
 
-=head2 API::Discogs::Release
+=head2 Discogs::API::Release
 
-The C<API::Discogs::Release> object represents a particular physical or
-digital object released by one or more L<API::Discogs::Artist>s.
+The C<Discogs::API::Release> object represents a particular physical or
+digital object released by one or more L<Discogs::API::Artist>s.
 
 =item artists
 
-A list of L<API::Discogs::ArtistSummary> objects for this release.
+A list of L<Discogs::API::ArtistSummary> objects for this release.
 
 =item average
 
@@ -1360,17 +1360,17 @@ A string with the artists, sorted.
 
 =item community
 
-The L<API::Discogs::Community> object with all of the Discogs community
+The L<Discogs::API::Community> object with all of the Discogs community
 information associated with this release.
 
 =item companies
 
-A list of L<API::Discogs::CatalogEntry> objects of entities that had
+A list of L<Discogs::API::CatalogEntry> objects of entities that had
 something to do with this release.
 
 =item contributors
 
-A list of L<API::Discogs::User> objects of contributors to the community
+A list of L<Discogs::API::User> objects of contributors to the community
 information of this release.
 
 =item count
@@ -1398,16 +1398,16 @@ system.
 =item estimated-weight
 
 An integer value to indicate the weight of this release compared to other
-release in the L<API::Discogs::MasterRelease>.
+release in the L<Discogs::API::MasterRelease>.
 
 =item extraartists
 
-A list of L<API::Discogs::ArtistSummary> objects for additional artists
+A list of L<Discogs::API::ArtistSummary> objects for additional artists
 in this release.
 
 =item fetch-master-release
 
-Fetch the associated L<API::Discogs::MasterRelease> object.
+Fetch the associated L<Discogs::API::MasterRelease> object.
 
 =item format-quantity
 
@@ -1415,7 +1415,7 @@ An integer value for the number of formats available for this release.
 
 =item formats
 
-A list of L<API::Discogs::Format> objects that are available for this
+A list of L<Discogs::API::Format> objects that are available for this
 release.
 
 =item genres
@@ -1432,26 +1432,26 @@ The integer value that identifies this release.
 
 =item identifiers
 
-A list of L<API::Discogs::Identifier> objects for this release.
+A list of L<Discogs::API::Identifier> objects for this release.
 
 =item images
 
-A list of L<API::Discogs::Image> objects for this release.
+A list of L<Discogs::API::Image> objects for this release.
 
 =item labels
 
-A list of L<API::Discogs::CatalogEntry> objects that serve as a
+A list of L<Discogs::API::CatalogEntry> objects that serve as a
 "label"  for this release.
 
 =item lowest-price
 
 A rational value indicating the lowest price if this release is
 available in the Discogs Marketplace in the currency that was
-(implicitely) specified when creating the L<API::Discogs> object.
+(implicitely) specified when creating the L<Discogs::API> object.
 
 =item master-id
 
-The integer value of the L<API::Discogs::MasterRelease> id of this
+The integer value of the L<Discogs::API::MasterRelease> id of this
 release.
 
 =item master-url
@@ -1483,11 +1483,11 @@ A string with a machine readable for of the date this release was released.
 
 =item resource-url
 
-The URL to fetch this L<API::Discogs::Release> object using the Discogs API.
+The URL to fetch this L<Discogs::API::Release> object using the Discogs API.
 
 =item series
 
-A list of L<API::Discogs::CatalogEntry> objects of which this release is
+A list of L<Discogs::API::CatalogEntry> objects of which this release is
 a part of.
 
 =item status
@@ -1500,7 +1500,7 @@ A list of strings indicating the styles of this release.
 
 =item submitter
 
-The L<API::Discogs::User> object for the submitter of this release.
+The L<Discogs::API::User> object for the submitter of this release.
 
 =item thumb
 
@@ -1512,7 +1512,7 @@ A string with the title of this release.
 
 =item tracklist
 
-A list of L<API::Discogs::Track> objects of this release.
+A list of L<Discogs::API::Track> objects of this release.
 
 =item uri
 
@@ -1520,7 +1520,7 @@ The URL to access this release on the Discogs image website.
 
 =item videos
 
-A list of L<API::Discogs::Video> objects associated with this release.
+A list of L<Discogs::API::Video> objects associated with this release.
 
 =item want
 
@@ -1530,9 +1530,9 @@ An integer indicating how many community members want to have this release.
 
 An integer value of the year this release was released.
 
-=head2 API::Discogs::SearchResult
+=head2 Discogs::API::SearchResult
 
-This object is usually created as part of a L<API::Discogs::SearchResults>
+This object is usually created as part of a L<Discogs::API::SearchResults>
 object.
 
 =item cover_image
@@ -1576,7 +1576,7 @@ A URI to fetch the full information for this release on the Discogs website.
 
 =item user-data
 
-A L<API::Discogs::StatsData> object with data.  It's probably easier to use
+A L<Discogs::API::StatsData> object with data.  It's probably easier to use
 the C<user-in-collection> and C<user-in-wantlist> methods.
 
 =item user-in-collection
@@ -1588,9 +1588,9 @@ An unsigned integer indicating whether the current user has this entry.
 An unsigned integer indicating whether the current user wants to have this
 entry.
 
-=head2 API::Discogs::SearchResults
+=head2 Discogs::API::SearchResults
 
-Retrieves a list of L<API::Discogs::Searchresult> objects that match
+Retrieves a list of L<Discogs::API::Searchresult> objects that match
 the given query parameters, and pagination settings.
 
 =item first-page
@@ -1606,7 +1606,7 @@ available.
 
 =item items
 
-An integer indicating the total number of L<API::Discogs::SearchResult>
+An integer indicating the total number of L<Discogs::API::SearchResult>
 objects there are available.
 
 =item last-page
@@ -1640,7 +1640,7 @@ this object.
 
 =item pagination
 
-The L<API::Discogs::Pagination> object associted with this object.
+The L<Discogs::API::Pagination> object associted with this object.
 Usually not needed, as its information is available in shortcut methods.
 
 =item per-page
@@ -1659,39 +1659,39 @@ Discogs API.  Returns C<Nil> if already on the first page.
 
 =item results
 
-A list of L<API::Discogs::SearchResult> objects.
+A list of L<Discogs::API::SearchResult> objects.
 
-=head2 API::Discogs::Stats
+=head2 Discogs::API::Stats
 
 This object is usually created as part of the
-L<API::Discogs::MasterReleaseVersion> object.
+L<Discogs::API::MasterReleaseVersion> object.
 
 =item user
 
-The L<API::Discogs::StatsData> object with statistics of the current user.
+The L<Discogs::API::StatsData> object with statistics of the current user.
 
 =item user
 
-The L<API::Discogs::StatsData> object with statistics of the Discogs community.
+The L<Discogs::API::StatsData> object with statistics of the Discogs community.
 
-=head2 API::Discogs::StatsData
+=head2 Discogs::API::StatsData
 
-This object is usually created as part of the L<API::Discogs::Stats>
+This object is usually created as part of the L<Discogs::API::Stats>
 object.
 
 =item in-collection
 
 An unsigned integer indicating how many people in the Discogs community
-have the associated L<API::Discogs::MasterReleaseVersion> in their collection.
+have the associated L<Discogs::API::MasterReleaseVersion> in their collection.
 
 =item in-wantlist
 
 An unsigned integer indicating how many people in the Discogs community
-have the associated L<API::Discogs::MasterReleaseVersion> in their want list.
+have the associated L<Discogs::API::MasterReleaseVersion> in their want list.
 
-=head2 API::Discogs::SubLabel
+=head2 Discogs::API::SubLabel
 
-This object is usually created as part of the L<API::Discogs::Label>
+This object is usually created as part of the L<Discogs::API::Label>
 object.
 
 =item id
@@ -1704,13 +1704,13 @@ A string with the name of this sublabel.
 
 =item resource-url
 
-The URL to get the full L<API::Discogs::Label> information of this
+The URL to get the full L<Discogs::API::Label> information of this
 C<SubLabel> using the Discogs API.
 
-=head2 API::Discogs::Track
+=head2 Discogs::API::Track
 
 The information about a track on a release, usually created automatically
-as part of a L<API::Discogs::Release> object.
+as part of a L<Discogs::API::Release> object.
 
 =item duration
 
@@ -1728,20 +1728,20 @@ A string containing the title of this track.
 
 A string to indicate the type of track, usually "track".
 
-=head2 API::Discogs::User
+=head2 Discogs::API::User
 
-This object is usually created as part of other C<API::Discogs> objects.
+This object is usually created as part of other C<Discogs::API> objects.
 
 =item resource-url
 
-The URL to get the full L<API::Discogs::User> information of this
+The URL to get the full L<Discogs::API::User> information of this
 user using the Discogs API.
 
 =item username
 
 The string with which the Discogs user is identified.
 
-=head2 API::Discogs::UserReleaseRating
+=head2 Discogs::API::UserReleaseRating
 
 Provide the rating a user has given a release.
 
@@ -1757,9 +1757,9 @@ An unsigned integer for the release ID.
 
 A string for the username.
 
-=head2 API::Discogs::Value
+=head2 Discogs::API::Value
 
-An object usually created as part of the L<API::Discogs::FilterFacet>
+An object usually created as part of the L<Discogs::API::FilterFacet>
 object.
 
 =item count
@@ -1774,10 +1774,10 @@ A string for the title of this object.
 
 A string indicating the value of this object.
 
-=head2 API::Discogs::Video
+=head2 Discogs::API::Video
 
 The information about a video, usually created automatically as part
-of a L<API::Discogs::Release> object.
+of a L<Discogs::API::Release> object.
 
 =item description
 

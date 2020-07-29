@@ -66,7 +66,7 @@ my role PaginationShortcuts {  # does NeedsClient
 
 #--------------- actual class and its attributes -------------------------------
 
-our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
+our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
     has Cro::HTTP::Client $.client = $default-client;
     has AllowedCurrency $.currency = %*ENV<DISCOGS_CURRENCY> // @currencies[0];
     has UInt            $.per-page = 50;
@@ -99,7 +99,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     }
 
     # main worker for creating non-asynchronous work
-    method GET(API::Discogs:D: $uri, $class) {
+    method GET(Discogs::API:D: $uri, $class) {
         my @headers;
         @headers.push((Authorization => "Discogs key=$.key, secret=$!secret"))
           if $!secret && $.key;
@@ -114,8 +114,8 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     }
 
     # accessing the Cro::HTTP::Client
-    multi method client(API::Discogs:U:) { $default-client }
-    multi method client(API::Discogs:D:) { $!client }
+    multi method client(Discogs::API:U:) { $default-client }
+    multi method client(Discogs::API:D:) { $!client }
 
 #--------------- supporting classes derived from the JSON API ------------------
 
@@ -242,7 +242,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         }
     }
 
-    method master-release(API::Discogs:D:
+    method master-release(Discogs::API:D:
       UInt:D $id
     --> MasterRelease:D) {
         self.GET("/masters/$id", MasterRelease)
@@ -293,7 +293,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         }
     }
 
-    method release(API::Discogs:D:
+    method release(Discogs::API:D:
       UInt:D $id, AllowedCurrency:D :$currency = $.currency
     --> Release:D) {
         self.GET("/releases/$id?$currency", Release)
@@ -307,22 +307,22 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       username    => Username,
     ] { }
 
-    multi method user-release-rating(API::Discogs:D:
+    multi method user-release-rating(Discogs::API:D:
       UInt:D $id, Username $username
     --> UserReleaseRating:D) {
         self.GET("/releases/$id/rating/$username", UserReleaseRating)
     }
-    multi method user-release-rating(API::Discogs:D:
+    multi method user-release-rating(Discogs::API:D:
       Release:D $release, Username $username
     --> UserReleaseRating:D) {
         self.user-release-rating($release.id, $username)
     }
-    multi method user-release-rating(API::Discogs:D:
+    multi method user-release-rating(Discogs::API:D:
       Release:D $release, User:D $user
     --> UserReleaseRating:D) {
         self.user-release-rating($release.id, $user.username)
     }
-    multi method user-release-rating(API::Discogs:D:
+    multi method user-release-rating(Discogs::API:D:
       UInt:D $id, User:D $user
     --> UserReleaseRating:D) {
         self.user-release-rating($id, $user.username)
@@ -333,12 +333,12 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       release_id => { type => UInt, name => 'release-id' },
     ] { }
 
-    multi method community-release-rating(API::Discogs:D:
+    multi method community-release-rating(Discogs::API:D:
       UInt:D $id
     --> CommunityReleaseRating:D) {
         self.GET("/releases/$id/rating", CommunityReleaseRating)
     }
-    multi method community-release-rating(API::Discogs:D:
+    multi method community-release-rating(Discogs::API:D:
       Release:D $release
     --> CommunityReleaseRating:D) {
         self.community-release-rating($release.id)
@@ -410,7 +410,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       pagination       => Pagination,
     ] does NeedsClient does PaginationShortcuts { }
 
-    method master-release-versions(API::Discogs:D:
+    method master-release-versions(Discogs::API:D:
       UInt:D $id,
     --> MasterReleaseVersions:D) {
         self.GET(
@@ -445,7 +445,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       uri          => URL,
     ] { }
 
-    method label(API::Discogs:D:
+    method label(Discogs::API:D:
       UInt:D $id
     --> Label:D) {
         self.GET("/labels/$id", Label)
@@ -470,7 +470,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       pagination  => Pagination,
     ] does NeedsClient does PaginationShortcuts { }
 
-    method label-releases(API::Discogs:D:
+    method label-releases(Discogs::API:D:
       UInt:D $id
     --> LabelReleases:D) {
         self.GET(
@@ -495,7 +495,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       uri               => URL,
     ] { }
 
-    method artist(API::Discogs:D:
+    method artist(Discogs::API:D:
       UInt:D $id
     --> Artist:D) {
         self.GET("/artists/$id", Artist)
@@ -536,7 +536,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       pagination  => Pagination,
     ] does NeedsClient does PaginationShortcuts { }
 
-    method artist-releases(API::Discogs:D:
+    method artist-releases(Discogs::API:D:
       UInt:D $id
     --> ArtistReleases:D) {
         self.GET(
@@ -574,7 +574,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       pagination => Pagination,
     ] does NeedsClient does PaginationShortcuts { }
 
-    method search(API::Discogs:D: *%_ --> SearchResults:D) {
+    method search(Discogs::API:D: *%_ --> SearchResults:D) {
         my str @params;
         for %_.kv -> $key, $value {
             if %valid_query_key{$key} {
@@ -598,7 +598,7 @@ $default-client := Cro::HTTP::Client.new:
   base-uri => "https://api.discogs.com",
   headers => (
     Accepts    => "application/vnd.discogs.v2.discogs+json",
-    User-agent => "Raku Discogs Agent v" ~ API::Discogs.^ver,
+    User-agent => "Raku Discogs Agent v" ~ Discogs::API.^ver,
   );
 
 # vim: expandtab shiftwidth=4
