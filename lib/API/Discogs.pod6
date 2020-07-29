@@ -682,6 +682,48 @@ A URL to see the information of this label on the Discogs website.
 
 A list of URLs related to this label.
 
+=head2 API::Discogs::LabelRelease
+
+This object is usually created as part of a L<API::Discogs::LabelReleases>
+object.
+
+=item artist
+
+A string with the name of the artist of this release.
+
+=item catno
+
+A string with the catalog number of this release.
+
+=item format
+
+A string with the format of this release.
+
+=item id
+
+An unsigned integer for the ID of this release.
+
+=item resource-url
+
+A URL to get the full release information of this release using the
+Discogs API.
+
+=item status
+
+The status of the information about this release in the community.
+
+=item thumb
+
+A URL for a thumbnail image for this release.
+
+=item title
+
+A string for the title of this release.
+
+=item year
+
+An unsigned integer indicating the year this release was released.
+
 =head2 API::Discogs::LabelReleases
 
 Retrieves a list of all L<API::Discogs::LabelRelease> objects that are

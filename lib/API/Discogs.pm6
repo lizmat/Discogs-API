@@ -449,7 +449,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the releases of a label ---------------------------------
 
-    our class LabelRelease does Hash2Class[
+    our class LabelRelease does Hash2Class[ # OK
       artist       => Str,
       catno        => Str,
       format       => Format,
