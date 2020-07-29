@@ -1,5 +1,5 @@
 use Test;
-use API::Discogs;
+use Discogs::API;
 
 plan 1;
 
