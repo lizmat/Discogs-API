@@ -115,6 +115,21 @@ Helper method to fetch data using the Discogs API for the given URI,
 and interpret it as data of the given class.  Returns an instance of
 the given class, or throws if something went wrong.
 
+=head2 test-with
+
+=begin code :lang<raku>
+
+my $discogs = Discogs::API.new.test-with($path);
+
+=end code
+
+Provide an alternate L<Discogs::API> object that can be used for testing.
+Instead of fetching the data from Discogs, it will look at the indicated
+path and map the URI to a file with the same name.  So an URI like
+C<"/artist/108713"> and a path C<"foo/bar".IO> will look for a file called
+C<"foo/bar/artist/108713.json">, slurp that, and create the requested object
+out of that.
+
 =head1 CONTENT METHODS
 
 =head2 artist

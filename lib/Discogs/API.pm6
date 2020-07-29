@@ -117,6 +117,22 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
     multi method client(Discogs::API:U:) { $default-client }
     multi method client(Discogs::API:D:) { $!client }
 
+    # return an adapted object for testing from files
+    method test-with(Discogs::API:D:
+       IO::Path:D $path
+    --> Discogs::API:D) {
+        self but role Testing {
+            method GET(Discogs::API:D: $uri, $class) {
+                use JSON::Fast;
+                $class.new(from-json(
+                  $path.add(
+                    "$uri.subst('QQ','?',:g).subst('EQ','=',:g)\.json"
+                  ).slurp
+                ))
+            }
+        }
+    }
+
 #--------------- supporting classes derived from the JSON API ------------------
 
     our class ArtistSummary does Hash2Class[
