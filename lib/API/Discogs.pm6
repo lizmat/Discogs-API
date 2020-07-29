@@ -536,7 +536,9 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       UInt:D $id
     --> ArtistReleases:D) {
         self.GET(
-          "/artists/$id/releases?" ~ self!pagination(%_),
+          "/artists/$id/releases?"
+            ~ self!gather-nameds(%_, <sort sort-order>),
+            ~ self!pagination(%_),
           ArtistReleases
         )
     }

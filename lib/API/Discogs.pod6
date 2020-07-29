@@ -136,12 +136,41 @@ my $artist-releases = $discogs.artist-releases(
   108713,         # the artist ID
   page     => 2,  # page number, default: 1
   per-page => 25, # items per page, default: object
+
+  sort => "year", # sort on given key, default no sort
+  sort-order => "desc", # sort order, default to "asc"
 );
 
 =end code
 
 Fetch all of the releases of given artist ID and return them in
 pages in a L<API::Discogs::ArtistReleases> object.
+
+=item page
+
+An integer indicating the page to obtain the C<ArtistRelease>
+objects of.  Defaults to 1.
+
+=item per-page
+
+An integer indicating the maximum number of items per page to be
+produced.  Defaults to what was (implicitely) specified with the
+creation of the C<API::Discogs> object.
+
+=item sort
+
+A string indicating how the C<ArtistRelease> objects to be returned.
+Defaults to no sorting.  The following fields can be specified:
+
+  year title format
+
+=item sort-order
+
+A string indicating the sort order of any sort action to be performed
+on the C<ArtistRelease> objects to be returned.  Defaults to "asc".
+The following fields can be specified:
+
+  asc desc
 
 =head2 community-release-rating
 
