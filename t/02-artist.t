@@ -6,6 +6,7 @@ my $discogs := Discogs::API.new.test-with($?FILE.IO.sibling("client"));
 my $artist := $discogs.artist($id);
 
 isa-ok $artist, Discogs::API::Artist, 'did we get an artist';
+ok $artist.data-quality ~~ Quality, 'is data-quality ok';
 is $artist.data-quality, "Needs Vote", 'is data-quality ok';
 is $artist.id, $id, 'is id ok';
 
