@@ -348,12 +348,12 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the versions of a master release ------------------------
 
-    our class StatsData does Hash2Class[ #OK
+    our class StatsData does Hash2Class[ # OK
       in_collection => { type => Int, name => 'in-collection' },
       in_wantlist   => { type => Int, name => 'in-wantlist' },
     ] { }
 
-    our class Stats does Hash2Class[ #OK
+    our class Stats does Hash2Class[ # OK
       user      => StatsData,
       community => StatsData,
     ] { }
@@ -371,20 +371,33 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       '%available' => UInt,
     ] { }
 
-    our class MasterReleaseVersion does Hash2Class[
+    our class MasterReleaseVersion does Hash2Class[ # OK
       '@major_formats' => { type => Str, name => 'major-formats' },
       '%label'         => Str,
       catno            => Str,
       country          => Country,
       format           => Str,
       id               => UInt,
-      released         => Str,
+      released         => UInt(Str),
       resource_url     => { type => URL, name => 'resource-url' },
       stats            => Stats,
       status           => Status,
       thumb            => URL,
       title            => Str,
-    ] { }
+    ] {
+        method user-in-collection(MasterReleaseVersion:D: --> UInt:D) {
+            $.stats.user.in-collection
+        }
+        method user-in-wantlist(MasterReleaseVersion:D: --> UInt:D) {
+            $.stats.user.in-wantlist
+        }
+        method community-in-collection(MasterReleaseVersion:D: --> UInt:D) {
+            $.stats.community.in-collection
+        }
+        method community-in-wantlist(MasterReleaseVersion:D: --> UInt:D) {
+            $.stats.community.in-wantlist
+        }
+    }
 
     our class MasterReleaseVersions does Hash2Class[ # OK
       '@filter_facets' => { type => FilterFacet, name => 'filter-facets' },

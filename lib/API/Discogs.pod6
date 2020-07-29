@@ -824,6 +824,80 @@ release.
 
 An integer for the year in which this master release was released.
 
+=head2 API::Discogs::MasterReleaseVersion
+
+This object is usually created as part of the
+L<API::Discogs::MasterReleaseVersions> object.
+
+=item catno
+
+The catalog number of the associated L<API::Discogs::CatalogEntry> object.
+
+=item community-in-collection
+
+An unsigned integer indicating the number of people in the Discogs
+community that have this release.
+
+=item community-in-wantlist
+
+An unsigned integer indicating the number of people in the Discogs
+community that want to have this release.
+
+=item country
+
+A string indicating the country of this release.
+
+=item format
+
+A string indicating the format of this release.
+
+=item id
+
+The ID of this release.
+
+=item label
+
+The ID of the associated C<API::Discogs::Label> object.
+
+=item major-formats
+
+A string indicating the major formats in which this release is available.
+
+=item released
+
+An unsigned integer indicating the year that this release was released.
+
+=item resource-url
+
+The URL to obtain the information about this release using the Discogs API.
+
+=item stats
+
+An L<API::Discogs::Stats> object with user and community statistics.  It is
+probably easier to use the short-cut methods C<community-in-collection>,
+C<community-in-wantlist>, C<user-in-collection>, C<user-in-wantlist>.
+
+=item status
+
+A string indicating the status of the information about this release.
+
+=item thumb
+
+A URL for a thumbnail image associated with this release.
+
+=item title
+
+A string with the title of this release.
+
+=item user-in-collection
+
+An unsigned integer indicating whether the current user has this release.
+
+=item user-in-wantlist
+
+An unsigned integer indicating whether the current user wants to have this
+release.
+
 =head2 API::Discogs::MasterReleaseVersions
 
 Retrieves a list of all L<API::Discogs::MasterReleaseVersion> objects that are
