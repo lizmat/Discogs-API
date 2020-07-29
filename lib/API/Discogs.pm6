@@ -499,20 +499,33 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the releases of an artist -------------------------------
 
-    our class ArtistRelease does Hash2Class[
-      '%stats'     => Stats,
+    our class ArtistRelease does Hash2Class[ # OK
       artist       => Str,
       format       => Str,
       id           => UInt,
       label        => Str,
       resource_url => { type => URL, name => 'resource-url' },
       role         => Str,
+      stats        => Stats,
       status       => Status,
       thumb        => URL,
       title        => Str,
       type         => Str,
       year         => Year,
-    ] { }
+    ] {
+        method user-in-collection(ArtistRelease:D: --> UInt:D) {
+            $.stats.user.in-collection
+        }
+        method user-in-wantlist(ArtistRelease:D: --> UInt:D) {
+            $.stats.user.in-wantlist
+        }
+        method community-in-collection(ArtistRelease:D: --> UInt:D) {
+            $.stats.community.in-collection
+        }
+        method community-in-wantlist(ArtistRelease:D: --> UInt:D) {
+            $.stats.community.in-wantlist
+        }
+    }
 
     our class ArtistReleases does Hash2Class[ # OK
       '@releases' => ArtistRelease,
