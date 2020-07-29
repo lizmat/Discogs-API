@@ -196,12 +196,6 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       resource_url => { type => URL, name => 'resource-url' },
     ] { }
 
-    our class Value does Hash2Class[ # OK
-      count => Int,
-      title => Str,
-      value => Str,
-    ] { }
-
     our class Pagination does Hash2Class[ # OK
       '%urls'  => URL,
       items    => UInt,
@@ -358,7 +352,13 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       community => StatsData,
     ] { }
 
-    our class FilterFacet does Hash2Class[
+    our class Value does Hash2Class[ # OK
+      count => Int,
+      title => Str,
+      value => Str,
+    ] { }
+
+    our class FilterFacet does Hash2Class[ # OK
       '@values'              => Value,
       allows_multiple_values => { type => Bool,
                                   name => 'allows-multiple-values' },
@@ -366,7 +366,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       title                  => Str,
     ] { }
 
-    our class Filters does Hash2Class[
+    our class Filters does Hash2Class[ # OK
       '%applied'   => FilterFacet,
       '%available' => UInt,
     ] { }

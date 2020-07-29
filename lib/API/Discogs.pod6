@@ -535,6 +535,40 @@ A rational number indicating the rating.
 
 An unsigned integer for the ID of the release.
 
+=head2 API::Discogs::FilterFacet
+
+An object usually created as part of the L<API::Discogs::MasterReleaseVersions>
+object.
+
+=item allows-multiple-values
+
+A Bool indicating whether more than one value is allowed in C<values>.
+
+=item id
+
+The ID.
+
+=item title
+
+The title.
+
+=item values
+
+A list of one or more values.
+
+=head2 API::Discogs::Filters
+
+An object usually created as part of the L<API::Discogs::MasterReleaseVersions>
+object.
+
+=item applied
+
+A hash indicating which L<API::Discogs::FilterFacet>s have been applied.
+
+=item available
+
+A hash of unsigned integer indicating how many entries are available.
+
 =head2 API::Discogs::Format
 
 An object that describes the format of a release.  Usually created by
@@ -1402,7 +1436,8 @@ A string for the username.
 
 =head2 API::Discogs::Value
 
-A generic object created by other objects.
+An object usually created as part of the L<API::Discogs::FilterFacet>
+object.
 
 =item count
 
