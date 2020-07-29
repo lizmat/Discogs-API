@@ -1230,6 +1230,34 @@ Discogs API.  Returns C<Nil> if already on the first page.
 
 A list of L<API::Discogs::SearchResult> objects.
 
+=head2 API::Discogs::Stats
+
+This object is usually created as part of the
+L<API::Discogs::MasterReleaseVersion> object.
+
+=item user
+
+The L<API::Discogs::StatsData> object with statistics of the current user.
+
+=item user
+
+The L<API::Discogs::StatsData> object with statistics of the Discogs community.
+
+=head2 API::Discogs::StatsData
+
+This object is usually created as part of the L<API::Discogs::Stats>
+object.
+
+=item in-collection
+
+An unsigned integer indicating how many people in the Discogs community
+have the associated L<API::Discogs::MasterReleaseVersion> in their collection.
+
+=item in-wantlist
+
+An unsigned integer indicating how many people in the Discogs community
+have the associated L<API::Discogs::MasterReleaseVersion> in their want list.
+
 =head2 API::Discogs::SubLabel
 
 This object is usually created as part of the L<API::Discogs::Label>
