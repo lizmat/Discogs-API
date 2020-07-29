@@ -211,6 +211,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     ] { }
 
 #-------------- getting the information of a master release ---------------------
+    our class Release { ... }  # need to stub for fetch- methods
 
     our class MasterRelease does Hash2Class[ # OK
       '@artists'              => ArtistSummary,
@@ -234,7 +235,14 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       uri                     => URL,
       versions_url            => { type => URL, name => 'versions-url' },
       year                    => Year,
-    ] { }
+    ] does NeedsClient {
+        method fetch-main-release(--> API::Discogs::Release:D) {
+            $.client.release($.main-release)
+        }
+        method fetch-most-recent-release(--> API::Discogs::Release:D) {
+            $.client.release($.most-recent-release)
+        }
+    }
 
     method master-release(API::Discogs:D:
       UInt:D $id

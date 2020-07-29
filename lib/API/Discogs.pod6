@@ -735,6 +735,16 @@ A list of L<API::Discogs::ArtistSummary> objects for this master release.
 
 A string describing the quality of the data of this master release.
 
+=item fetch-main-release
+
+Fetch the main L<API::Discogs::Release> of this main release
+using the Discogs API.
+
+=item fetch-most-recent-release
+
+Fetch the most recent L<API::Discogs::Release> of this main release
+using the Discogs API.
+
 =item genres
 
 A list of strings describing the genres of this master release.
