@@ -236,10 +236,10 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       versions_url            => { type => URL, name => 'versions-url' },
       year                    => Year,
     ] does NeedsClient {
-        method fetch-main-release(--> API::Discogs::Release:D) {
+        method fetch-main-release(--> Release:D) {
             $.client.release($.main-release)
         }
-        method fetch-most-recent-release(--> API::Discogs::Release:D) {
+        method fetch-most-recent-release(--> Release:D) {
             $.client.release($.most-recent-release)
         }
     }
@@ -290,7 +290,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         method submitter()    { $.community.submitter      }
         method want()         { $.community.have           }
 
-        method fetch-master-release(--> API::Discogs::MasterRelease:D) {
+        method fetch-master-release(--> MasterRelease:D) {
             $.client.master-release($.master-id)
         }
     }
