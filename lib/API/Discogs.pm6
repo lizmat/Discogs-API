@@ -76,10 +76,14 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #--------------- the specific methods one can call -----------------------------
 
-    # helper method for setting pagination parameters
-    method !pagination(%nameds --> Str:D) {
-        my UInt $page     := %nameds<page>:delete     // 1;
-        my UInt $per-page := %nameds<per-page>:delete // $.per-page;
+    # helper method for setting pagination parameters, must be last one
+    method !pagination(%named --> Str:D) {
+        my UInt $page     := %named<page>:delete     // 1;
+        my UInt $per-page := %named<per-page>:delete // $.per-page;
+
+        if %named.keys -> @extra {
+            die "Found unsupported query keys: @extra.sort()";
+        }
         "page=$page&per_page=$per-page"
     }
 
@@ -413,7 +417,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
           "/masters/$id/versions?"
             ~ self!gather-nameds(
                 %_, <format label released country sort sort-order>
-              ),
+              )
             ~ self!pagination(%_),
           MasterReleaseVersions
         )
@@ -537,7 +541,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     --> ArtistReleases:D) {
         self.GET(
           "/artists/$id/releases?"
-            ~ self!gather-nameds(%_, <sort sort-order>),
+            ~ self!gather-nameds(%_, <sort sort-order>)
             ~ self!pagination(%_),
           ArtistReleases
         )
@@ -545,7 +549,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- searching the Discogs database ----------------------------------
 
-    our class SearchResult does Hash2Class[
+    our class SearchResult does Hash2Class[ # OK
       cover_image  => URL,
       id           => UInt,
       master_id    => { type => UInt, name => 'master-id' },
@@ -555,8 +559,15 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       title        => Str,
       type         => Str,
       uri          => URL,
-      user_data    => { type => Stats, name => 'user-data' },
-    ] { }
+      user_data    => { type => StatsData, name => 'user-data' },
+    ] {
+        method user-in-collection(ArtistRelease:D: --> UInt:D) {
+            $.user-data.in-collection
+        }
+        method user-in-wantlist(ArtistRelease:D: --> UInt:D) {
+            $.user-data.in-wantlist
+        }
+    }
 
     our class SearchResults does Hash2Class[ # OK
       '@results' => SearchResult,
@@ -564,7 +575,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
     ] does NeedsClient does PaginationShortcuts { }
 
     method search(API::Discogs:D: *%_ --> SearchResults:D) {
-        my str @params = self!pagination(%_);
+        my str @params;
         for %_.kv -> $key, $value {
             if %valid_query_key{$key} {
                 @params.push($key eq 'query'
@@ -574,10 +585,10 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
                 %_{$key}:delete;
             }
         }
-        if %_.keys -> @extra {
-            die "Found unsupported query keys: @extra.sort()";
-        }
-        self.GET("/database/search?" ~ @params.join("&"), SearchResults)
+        self.GET(
+          "/database/search?" ~ @params.join("&") ~ self!pagination(%_),
+          SearchResults
+        )
     }
 }
 

@@ -310,6 +310,126 @@ currency strings.  This defaults to the value for the currency
 that was (implicitely) specified when creating the C<API::Discogs>
 object.
 
+=head2 search
+
+Perform a general search in the Discogs database, optionally searching
+specific parts.  Returns a L<API::Discogs::SearchResults> object.
+
+=begin code :lang<raku>
+
+my $search = $discogs.search(
+  query    => "nirvana",  # general query
+  page     => 2,          # page number, default: 1
+  per-page => 25,         # items per page, default: object
+
+  query => "nirvana",     # generic search for given string
+  type => "release",      # optional search for type only
+  title => "nits - urk",  # optional artist - release search query
+  release-title => "urk", # optional search for to release name
+  credit => "kurt",       # optional search for credits
+  artist => "nirvana",    # optional search for artist name
+  anv => "nirvana",       # optional search for artist name variation
+  label => "Foo",         # optional search for label
+  genre => "rock",        # optional search for genre
+  style => "grunge",      # optional search for style
+  country => "belgium",   # optional search for country
+  year => 1992,           # optional search for year of release
+  format => "CD",         # optional search for format
+  catno => "DGCD-24425",  # optional search for catalog number
+  barcode => "7 2064-24425-2 4", # optional search for barcode
+  track => "smells like", # optional search for title of track
+  submitter => "milKt",   # optional search for username of submitter
+  contributor => "liz",   # optional search for username of contributor
+);
+
+=end code
+
+=item page
+
+An integer indicating the page to obtain the C<API::Discogs::SearchResult>
+objects of.  Defaults to 1.
+
+=item per-page
+
+An integer indicating the maximum number of items per page to be
+produced.  Defaults to what was (implicitely) specified with the
+creation of the C<API::Discogs> object.
+
+=item query
+
+The string to be searched for.
+
+=item type
+
+A string to determine which main fields to be searched.  Should be one of:
+
+  release master artist label
+
+=item title
+
+Special formatted string to search for an artist / release title combination.
+The hyphen indicates the separation, so e.g. "nirvana - nevermind".
+
+=item release-title
+
+Search for given string as title of a release only.
+
+=item credit
+
+Search for given string as credit for a release only.
+
+=item artist
+
+Search for given string as main name of artist only.
+
+=item anv
+
+Search for given string as alternative name variation of artist only.
+
+=item label
+
+Search for given string as name of label only.
+
+=item genre
+
+Search for given string as name of genre only.
+
+=item style
+
+Search for given string as name of style only.
+
+=item country
+
+Search for given string as name of country only.
+
+=item year
+
+Search for given year of release only.
+
+=item format
+
+Search for given string as format only.
+
+=item catno
+
+Search for given string as catalog number only.
+
+=item barcode
+
+Search for given string as barcode only.
+
+=item track
+
+Search for given string as track title only.
+
+=item submitter
+
+Search for given string as the username of a submitter only.
+
+=item submitter
+
+Search for given string as the username of a contributor only.
+
 =head2 user-release-rating
 
 =begin code :lang<raku>
@@ -398,7 +518,7 @@ community that have this release.
 
 =item community-in-wantlist
 
-An unsigned integer indicating the number of people in the Discogs
+An integer indicating the number of people in the Discogs
 community that want to have this release.
 
 =item format
@@ -446,12 +566,11 @@ A string indicating the type of release, e.g. "master".
 
 =item user-in-collection
 
-An unsigned integer indicating whether the current user has this release.
+A boolean indicating whether the current user has this release.
 
 =item user-in-wantlist
 
-An unsigned integer indicating whether the current user wants to have this
-release.
+A boolean indicating whether the current user wants to have this release.
 
 =item year
 
@@ -1410,6 +1529,64 @@ An integer indicating how many community members want to have this release.
 =item year
 
 An integer value of the year this release was released.
+
+=head2 API::Discogs::SearchResult
+
+This object is usually created as part of a L<API::Discogs::SearchResults>
+object.
+
+=item cover_image
+
+A URL with an image describing this search result.
+
+=item id
+
+An unsigned integer for the ID associated with a release.
+
+=item master-id
+
+An unsigned integer for the ID associated with a master release.
+
+=item master-url
+
+A URL to fetch the information of the associated master release using the
+Discogs API.
+
+=item resource-url
+
+A URL to fetch the full information for this entry using the Discogs API.
+
+=item thumb
+
+A URL for a thumbail image for this entry.
+
+=item title
+
+A string with the title associated for this entry.
+
+=item type
+
+A string indicating the type of entry.  Can be any of:
+
+  release master artist label
+
+=item uri
+
+A URI to fetch the full information for this release on the Discogs website.
+
+=item user-data
+
+A L<API::Discogs::StatsData> object with data.  It's probably easier to use
+the C<user-in-collection> and C<user-in-wantlist> methods.
+
+=item user-in-collection
+
+An unsigned integer indicating whether the current user has this entry.
+
+=item user-in-wantlist
+
+An unsigned integer indicating whether the current user wants to have this
+entry.
 
 =head2 API::Discogs::SearchResults
 
