@@ -1022,6 +1022,10 @@ release in the L<API::Discogs::MasterRelease>.
 A list of L<API::Discogs::ArtistSummary> objects for additional artists
 in this release.
 
+=item fetch-master-release
+
+Fetch the associated L<API::Discogs::MasterRelease> object.
+
 =item format-quantity
 
 An integer value for the number of formats available for this release.
@@ -1066,10 +1070,6 @@ available in the Discogs Marketplace in the currency that was
 
 The integer value of the L<API::Discogs::MasterRelease> id of this
 release.
-
-=item master-release
-
-Fetch the associated L<API::Discogs::MasterRelease> object.
 
 =item master-url
 

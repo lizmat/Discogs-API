@@ -282,7 +282,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         method submitter()    { $.community.submitter      }
         method want()         { $.community.have           }
 
-        method master-release(--> API::Discogs::MasterRelease:D) {
+        method fetch-master-release(--> API::Discogs::MasterRelease:D) {
             $.client.master-release($.master-id)
         }
     }
