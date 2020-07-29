@@ -119,7 +119,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #--------------- supporting classes derived from the JSON API ------------------
 
-    our class ArtistSummary does Hash2Class[ # OK
+    our class ArtistSummary does Hash2Class[
       anv          => Str,
       id           => UInt,
       join         => Str,
@@ -129,17 +129,17 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       tracks       => Str,
     ] { }
 
-    our class Rating does Hash2Class[ # OK
+    our class Rating does Hash2Class[
       average => Numeric,
       count   => Int,
     ] { }
 
-    our class User does Hash2Class[ # OK
+    our class User does Hash2Class[
       resource_url => { type => URL, name => 'resource-url' },
       username     => Username,
     ] { }
 
-    our class Community does Hash2Class[ # OK
+    our class Community does Hash2Class[
       '@contributors' => User,
       data_quality    => { type => Quality, name => 'data-quality' },
       have            => Int,
@@ -149,7 +149,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       want            => Int,
     ] { }
 
-    our class CatalogEntry does Hash2Class[ # OK
+    our class CatalogEntry does Hash2Class[
       catno            => Str,
       entity_type      => { type => Int, name => 'entity-type' },
       entity_type_name => { type => Str, name => 'entity-type-name' },
@@ -158,18 +158,18 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       resource_url => { type => URL, name => 'resource-url' },
     ] { }
 
-    our class Format does Hash2Class[ # OK
+    our class Format does Hash2Class[
       '@descriptions' => Str,
       name            => Str,
       qty             => Int,
     ] { }
 
-    our class Identifier does Hash2Class[ # OK
+    our class Identifier does Hash2Class[
       type  => Str,
       value => Str,
     ] { }
 
-    our class Image does Hash2Class[ # OK
+    our class Image does Hash2Class[
       height       => UInt,
       resource_url => { type => URL, name => 'resource-url' },
       type         => Str,
@@ -178,14 +178,14 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       width        => UInt,
     ] { }
 
-    our class Track does Hash2Class[ # OK
+    our class Track does Hash2Class[
       duration => Str,
       position => UInt(Str),
       title    => Str,
       type_    => { type => Str, name => 'type' },
     ] { }
 
-    our class Video does Hash2Class[ # OK
+    our class Video does Hash2Class[
       description => Str,
       duration    => Int,
       embed       => Bool,
@@ -193,14 +193,14 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       uri         => URL,
     ] { }
 
-    our class Member does Hash2Class[ # OK
+    our class Member does Hash2Class[
       active       => Bool,
       id           => UInt,
       name         => Str,
       resource_url => { type => URL, name => 'resource-url' },
     ] { }
 
-    our class Pagination does Hash2Class[ # OK
+    our class Pagination does Hash2Class[
       '%urls'  => URL,
       items    => UInt,
       page     => UInt,
@@ -211,7 +211,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 #-------------- getting the information of a master release ---------------------
     our class Release { ... }  # need to stub for fetch- methods
 
-    our class MasterRelease does Hash2Class[ # OK
+    our class MasterRelease does Hash2Class[
       '@artists'              => ArtistSummary,
       '@genres'               => Genre,
       '@images'               => Image,
@@ -250,7 +250,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the information of a specific release -------------------
 
-    our class Release does Hash2Class[ # OK
+    our class Release does Hash2Class[
       '@artists'        => ArtistSummary,
       '@companies'      => CatalogEntry,
       '@extraartists'   => ArtistSummary,
@@ -301,7 +301,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the rating of a specific release -----------------------
 
-    our class UserReleaseRating does Hash2Class[ # OK
+    our class UserReleaseRating does Hash2Class[
       rating      => ValidRating,
       release     => UInt,
       username    => Username,
@@ -328,7 +328,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         self.user-release-rating($id, $user.username)
     }
 
-    our class CommunityReleaseRating does Hash2Class[ # OK
+    our class CommunityReleaseRating does Hash2Class[
       rating     => Rating,
       release_id => { type => UInt, name => 'release-id' },
     ] { }
@@ -346,23 +346,23 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the versions of a master release ------------------------
 
-    our class StatsData does Hash2Class[ # OK
+    our class StatsData does Hash2Class[
       in_collection => { type => Int, name => 'in-collection' },
       in_wantlist   => { type => Int, name => 'in-wantlist' },
     ] { }
 
-    our class Stats does Hash2Class[ # OK
+    our class Stats does Hash2Class[
       user      => StatsData,
       community => StatsData,
     ] { }
 
-    our class Value does Hash2Class[ # OK
+    our class Value does Hash2Class[
       count => Int,
       title => Str,
       value => Str,
     ] { }
 
-    our class FilterFacet does Hash2Class[ # OK
+    our class FilterFacet does Hash2Class[
       '@values'              => Value,
       allows_multiple_values => { type => Bool,
                                   name => 'allows-multiple-values' },
@@ -370,12 +370,12 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       title                  => Str,
     ] { }
 
-    our class Filters does Hash2Class[ # OK
+    our class Filters does Hash2Class[
       '%applied'   => FilterFacet,
       '%available' => UInt,
     ] { }
 
-    our class MasterReleaseVersion does Hash2Class[ # OK
+    our class MasterReleaseVersion does Hash2Class[
       '@major_formats' => { type => Str, name => 'major-formats' },
       '%label'         => Str,
       catno            => Str,
@@ -403,7 +403,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         }
     }
 
-    our class MasterReleaseVersions does Hash2Class[ # OK
+    our class MasterReleaseVersions does Hash2Class[
       '@filter_facets' => { type => FilterFacet, name => 'filter-facets' },
       '@filters'       => Filters,
       '@versions'      => MasterReleaseVersion,
@@ -425,13 +425,13 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the information of a label ------------------------------
 
-    our class SubLabel does Hash2Class[ # OK
+    our class SubLabel does Hash2Class[
       id           => UInt,
       name         => Str,
       resource_url => { type => URL, name => 'resource-url' },
     ] { }
 
-    our class Label does Hash2Class[ # OK
+    our class Label does Hash2Class[
       '@images'    => Image,
       '@sublabels' => SubLabel,
       '@urls'      => URL,
@@ -453,7 +453,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the releases of a label ---------------------------------
 
-    our class LabelRelease does Hash2Class[ # OK
+    our class LabelRelease does Hash2Class[
       artist       => Str,
       catno        => Str,
       format       => Format,
@@ -465,7 +465,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
       year         => UInt,
     ] { }
 
-    our class LabelReleases does Hash2Class[ # OK
+    our class LabelReleases does Hash2Class[
       '@releases' => LabelRelease,
       pagination  => Pagination,
     ] does NeedsClient does PaginationShortcuts { }
@@ -481,7 +481,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the information about an artist -------------------------
 
-    our class Artist does Hash2Class[ # OK
+    our class Artist does Hash2Class[
       '@images'         => Image,
       '@members'        => Member,
       '@namevariations' => Str,
@@ -503,7 +503,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- getting the releases of an artist -------------------------------
 
-    our class ArtistRelease does Hash2Class[ # OK
+    our class ArtistRelease does Hash2Class[
       artist       => Str,
       format       => Str,
       id           => UInt,
@@ -531,7 +531,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         }
     }
 
-    our class ArtistReleases does Hash2Class[ # OK
+    our class ArtistReleases does Hash2Class[
       '@releases' => ArtistRelease,
       pagination  => Pagination,
     ] does NeedsClient does PaginationShortcuts { }
@@ -549,7 +549,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
 #-------------- searching the Discogs database ----------------------------------
 
-    our class SearchResult does Hash2Class[ # OK
+    our class SearchResult does Hash2Class[
       cover_image  => URL,
       id           => UInt,
       master_id    => { type => UInt, name => 'master-id' },
@@ -569,7 +569,7 @@ our class API::Discogs:ver<0.0.1>:auth<cpan:ELIZABETH> {
         }
     }
 
-    our class SearchResults does Hash2Class[ # OK
+    our class SearchResults does Hash2Class[
       '@results' => SearchResult,
       pagination => Pagination,
     ] does NeedsClient does PaginationShortcuts { }
