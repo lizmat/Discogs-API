@@ -28,7 +28,7 @@ subset Quality of Str;
 subset Price of Real;
 subset Status of Str where "Accepted";
 subset Style of Str;
-subset URL of Str where .starts-with("https://") || .starts-with("http://");
+subset URL of Str where $_ eq "" || .starts-with("https://") || .starts-with("http://");
 subset Username of Str where /^ \w+ $/;
 subset ValidRating of Int where 1 <= $_ <= 5;
 subset Year of UInt where $_ > 1900 && $_ <= 2100;

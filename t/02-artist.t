@@ -1,0 +1,55 @@
+use Test;
+use Discogs::API;
+
+my $id = 108713;
+my $discogs := Discogs::API.new.test-with($?FILE.IO.sibling("client"));
+my $artist := $discogs.artist($id);
+
+isa-ok $artist, Discogs::API::Artist, 'did we get an artist';
+is $artist.data-quality, "Needs Vote", 'is data-quality ok';
+is $artist.id, $id, 'is id ok';
+
+my @images := $artist.images;
+is +@images, 4, 'did we get correct number of images';
+
+for @images -> $image {
+    isa-ok $image, Discogs::API::Image, 'did we get an image';
+    ok $image.height ~~ UInt, 'did we get an integer height';
+    ok $image.resource-url ~~ URL, 'did we get a URL resource';
+    ok $image.type ~~ Str, 'did we get a Str type';
+    ok $image.uri ~~ URL, 'did we get a uri';
+    ok $image.uri150 ~~ URL, 'did we get a uri150';
+    ok $image.width ~~ UInt, 'did we get an integer width';
+}
+
+my @members := $artist.members;
+is +@members, 5, 'did we get correct number of members';
+
+for @members -> $member {
+    isa-ok $member, Discogs::API::Member, 'did we get a member';
+    ok $member.active ~~ Bool, 'did we get a bool for active';
+    ok $member.id ~~ UInt, 'did we get an artist id';
+    ok $member.name ~~ Str, 'did we get an artist name';
+    ok $member.resource-url ~~ URL, 'did we get a resource URL';
+}
+
+my @namevariations := $artist.namevariations;
+is +@namevariations, 3, 'did we get correct number of name variations';
+
+for @namevariations -> $namevariation {
+    isa-ok $namevariation, Str, 'did we get a string for name variation';
+}
+
+isa-ok $artist.profile, Str, 'did we get a profile string';
+ok $artist.releases-url ~~ URL, 'did we get a releases URL';
+ok $artist.resource-url ~~ URL, 'did we get a resource URL';
+ok $artist.uri ~~ URL, 'did we get a generic uri';
+
+my @urls := $artist.urls;
+is +@urls, 9, 'did we get correct number of urls';
+
+for @urls -> $url {
+    ok $url ~~ URL, 'did we get a URL for the artist';
+}
+
+done-testing;
