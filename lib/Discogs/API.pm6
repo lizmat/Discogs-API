@@ -71,9 +71,9 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
     has Cro::HTTP::Client $.client = $default-client;
     has AllowedCurrency $.currency = %*ENV<DISCOGS_CURRENCY> // @currencies[0];
     has UInt            $.per-page = 50;
-    has Str $!token  is built = %*ENV<DISCOGS_TOKEN>;
-    has Str $.key;
-    has Str $!secret is built;
+    has Str $!token  is built = %*ENV<DISCOGS_TOKEN> // "";
+    has Str $.key             = "";
+    has Str $!secret is built = "";
 
 #--------------- the specific methods one can call -----------------------------
 
