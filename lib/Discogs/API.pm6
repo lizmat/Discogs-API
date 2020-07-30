@@ -127,7 +127,9 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
                 use JSON::Fast;
                 $class.new(from-json(
                   $path.add(
-                    "$uri.subst('?','QQ',:g).subst('=','EQ',:g)\.json"
+                    $uri.subst('?','QQ',:g)
+                        .subst('=','EQ',:g)
+                        .subst('&','AM',:g) ~ '.json'
                   ).slurp
                 ))
             }
@@ -374,7 +376,7 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
     ] { }
 
     our class Value does Hash2Class[
-      count => Int,
+      count => UInt,
       title => Str,
       value => Str,
     ] { }
@@ -399,7 +401,7 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
       country          => Country,
       format           => Str,
       id               => UInt,
-      released         => UInt(Str),
+      released         => Year(Str),
       resource_url     => { type => URL, name => 'resource-url' },
       stats            => Stats,
       status           => Status,
@@ -407,10 +409,10 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
       title            => Str,
     ] {
         method user-in-collection(MasterReleaseVersion:D: --> UInt:D) {
-            $.stats.user.in-collection
+            $.stats.user.in-collection // 0
         }
         method user-in-wantlist(MasterReleaseVersion:D: --> UInt:D) {
-            $.stats.user.in-wantlist
+            $.stats.user.in-wantlist // 0
         }
         method community-in-collection(MasterReleaseVersion:D: --> UInt:D) {
             $.stats.community.in-collection
@@ -422,7 +424,7 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
     our class MasterReleaseVersions does Hash2Class[
       '@filter_facets' => { type => FilterFacet, name => 'filter-facets' },
-      '@filters'       => Filters,
+      '%filters'       => Hash,
       '@versions'      => MasterReleaseVersion,
       pagination       => Pagination,
     ] does NeedsClient does PaginationShortcuts { }
