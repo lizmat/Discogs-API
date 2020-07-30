@@ -118,15 +118,6 @@ my @videos := $release.videos;
 is +@videos, 8, 'did we get correct number of videos';
 video-ok($_) for @videos;
 
-sub video-ok($video) {
-    isa-ok $video, Discogs::API::Video, 'did we get a Video object';
-    ok $video.description ~~ Str, 'did we get a string for description';
-    ok $video.duration ~~ UInt, 'did we get an unsigned int for duration';
-    ok $video.embed ~~ Bool, 'did we get a bool for embedding';
-    ok $video.title ~~ Str, 'did we get a string for title';
-    ok $video.uri ~~ URL, 'did we get a URL for uri';
-}
-
 is $release.want, 278, 'did we get correct want';
 
 done-testing;

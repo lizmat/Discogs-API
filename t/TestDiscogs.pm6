@@ -103,7 +103,7 @@ sub user-ok($user) is export {
     ok $user.username ~~ Username, 'did we get a username';
 }
 
-sub video-ok($video) {
+sub video-ok($video) is export {
     isa-ok $video, Discogs::API::Video, 'did we get a Video object';
     ok $video.description ~~ Str, 'did we get a string for description';
     ok $video.duration ~~ UInt, 'did we get an unsigned int for duration';
