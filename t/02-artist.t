@@ -1,6 +1,9 @@
 use Test;
 use Discogs::API;
 
+use lib $?FILE.IO.parent;
+use TestDiscogs;
+
 my $id = 108713;
 my $discogs := Discogs::API.new.test-with($?FILE.IO.sibling("client"));
 my $artist := $discogs.artist($id);
@@ -14,24 +17,14 @@ my @images := $artist.images;
 is +@images, 4, 'did we get correct number of images';
 
 for @images -> $image {
-    isa-ok $image, Discogs::API::Image, 'did we get an image';
-    ok $image.height ~~ UInt, 'did we get an integer height';
-    ok $image.resource-url ~~ URL, 'did we get a URL resource';
-    ok $image.type ~~ Str, 'did we get a Str type';
-    ok $image.uri ~~ URL, 'did we get a uri';
-    ok $image.uri150 ~~ URL, 'did we get a uri150';
-    ok $image.width ~~ UInt, 'did we get an integer width';
+    image-ok($image);
 }
 
 my @members := $artist.members;
 is +@members, 5, 'did we get correct number of members';
 
 for @members -> $member {
-    isa-ok $member, Discogs::API::Member, 'did we get a member';
-    ok $member.active ~~ Bool, 'did we get a bool for active';
-    ok $member.id ~~ UInt, 'did we get an artist id';
-    ok $member.name ~~ Str, 'did we get an artist name';
-    ok $member.resource-url ~~ URL, 'did we get a resource URL';
+    member-ok($member);
 }
 
 my @namevariations := $artist.namevariations;
@@ -54,3 +47,5 @@ for @urls -> $url {
 }
 
 done-testing;
+
+# vim: expandtab shiftwidth=4
