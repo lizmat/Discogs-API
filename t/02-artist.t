@@ -15,17 +15,11 @@ is $artist.id, $id, 'is id ok';
 
 my @images := $artist.images;
 is +@images, 4, 'did we get correct number of images';
-
-for @images -> $image {
-    image-ok($image);
-}
+image-ok($_) for @images;
 
 my @members := $artist.members;
 is +@members, 5, 'did we get correct number of members';
-
-for @members -> $member {
-    member-ok($member);
-}
+member-ok($_) for @members;
 
 my @namevariations := $artist.namevariations;
 is +@namevariations, 3, 'did we get correct number of name variations';
