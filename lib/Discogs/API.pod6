@@ -703,13 +703,13 @@ referred to as C<Label>s.  Usually created indirectly by other objects.
 
 A string with the identifying catalog number.
 
+=item entity-type
+
+An unsigned integer with a description of the type of this entity.
+
 =item entity-type-name
 
 A string with the name of this entity.
-
-=item entity-type
-
-A string with a description of the type of this entity.
 
 =item id
 
@@ -822,8 +822,8 @@ The name of this format.
 
 =item qty
 
-An integer indicating the number of copies that are available in this
-format in the Discogs Marketplace.
+An unsigned integer indicating the number of copies that are available
+in this format in the Discogs Marketplace.
 
 =head2 Discogs::API::Identifier
 
@@ -1488,13 +1488,13 @@ on the Discogs Marketplace.
 A rational number indicating the rating the members of the community
 have given this release.
 
-=item release-formatted
-
-A string with a human readable form of the date this release was released.
-
 =item released
 
 A string with a machine readable for of the date this release was released.
+
+=item released-formatted
+
+A string with a human readable form of the date this release was released.
 
 =item resource-url
 

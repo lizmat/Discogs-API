@@ -148,7 +148,7 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
     our class Rating does Hash2Class[
       average => Numeric,
-      count   => Int,
+      count   => UInt,
     ] { }
 
     our class User does Hash2Class[
@@ -159,17 +159,17 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class Community does Hash2Class[
       '@contributors' => User,
       data_quality    => { type => Quality, name => 'data-quality' },
-      have            => Int,
+      have            => UInt,
       rating          => Rating,
       status          => Status,
       submitter       => User,
-      want            => Int,
+      want            => UInt,
     ] { }
 
     our class CatalogEntry does Hash2Class[
       catno            => Str,
-      entity_type      => { type => Int, name => 'entity-type' },
-      entity_type_name => { type => Str, name => 'entity-type-name' },
+      entity_type      => { type => UInt(Str), name => 'entity-type' },
+      entity_type_name => { type => Str,       name => 'entity-type-name' },
       id               => UInt,
       name             => Str,
       resource_url => { type => URL, name => 'resource-url' },
@@ -178,7 +178,7 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
     our class Format does Hash2Class[
       '@descriptions' => Str,
       name            => Str,
-      qty             => Int,
+      qty             => UInt(Str),
     ] { }
 
     our class Identifier does Hash2Class[
@@ -197,7 +197,7 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
     our class Track does Hash2Class[
       duration => Str,
-      position => UInt(Str),
+      position => Str,
       title    => Str,
       type_    => { type => Str, name => 'type' },
     ] { }
@@ -268,42 +268,42 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
 #-------------- getting the information of a specific release -------------------
 
     our class Release does Hash2Class[
-      '@artists'        => ArtistSummary,
-      '@companies'      => CatalogEntry,
-      '@extraartists'   => ArtistSummary,
-      '@formats'        => Format,
-      '@genres'         => Genre,
-      '@identifiers'    => Identifier,
-      '@images'         => Image,
-      '@labels'         => CatalogEntry,
-      '@series'         => CatalogEntry,
-      '@styles'         => Style,
-      '@tracklist'      => Track,
-      '@videos'         => Video,
-      artists_sort      => { type => Str, name => 'artists-sort' },
-      community         => Community,
-      country           => Country,
-      data_quality      => { type => Quality, name => 'data-quality' },
-      date_added        => { type => DateTime(Str), name => 'date-added' },
-      date_changed      => { type => DateTime(Str), name => 'date-changed' },
-      estimated_weight  => { type => UInt, name => 'estimated-weight' },
-      format_quantity   => { type => UInt, name => 'format-quantity' },
-      id                => UInt,
-      lowest_price      => { type => Price, name => 'lowest-price' },
-      master_id         => { type => UInt, name => 'master-id' },
-      master_url        => { type => URL, name => 'master-url' },
-      notes             => Str,
-      num_for_sale      => { type => UInt, name => 'num-for-sale' },
-      released          => Str,
-      release_formatted => { type => Str, name => 'release-formatted' },
-      resource_url      => { type => URL, name => 'resource-url' },
+      '@artists'         => ArtistSummary,
+      '@companies'       => CatalogEntry,
+      '@extraartists'    => ArtistSummary,
+      '@formats'         => Format,
+      '@genres'          => Genre,
+      '@identifiers'     => Identifier,
+      '@images'          => Image,
+      '@labels'          => CatalogEntry,
+      '@series'          => CatalogEntry,
+      '@styles'          => Style,
+      '@tracklist'       => Track,
+      '@videos'          => Video,
+      artists_sort       => { type => Str, name => 'artists-sort' },
+      community          => Community,
+      country            => Country,
+      data_quality       => { type => Quality, name => 'data-quality' },
+      date_added         => { type => DateTime(Str), name => 'date-added' },
+      date_changed       => { type => DateTime(Str), name => 'date-changed' },
+      estimated_weight   => { type => UInt, name => 'estimated-weight' },
+      format_quantity    => { type => UInt, name => 'format-quantity' },
+      id                 => UInt,
+      lowest_price       => { type => Price, name => 'lowest-price' },
+      master_id          => { type => UInt, name => 'master-id' },
+      master_url         => { type => URL, name => 'master-url' },
+      notes              => Str,
+      num_for_sale       => { type => UInt, name => 'num-for-sale' },
+      released           => Str,
+      released_formatted => { type => Str, name => 'released-formatted' },
+      resource_url       => { type => URL, name => 'resource-url' },
     ] does NeedsClient {
         method average()      { $.community.rating.average }
         method contributors() { $.community.contributors   }
         method count()        { $.community.rating.count   }
         method have()         { $.community.have           }
         method submitter()    { $.community.submitter      }
-        method want()         { $.community.have           }
+        method want()         { $.community.want           }
 
         method fetch-master-release(--> MasterRelease:D) {
             $.client.master-release($.master-id)
