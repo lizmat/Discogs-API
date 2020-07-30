@@ -6,7 +6,7 @@
   "build-depends" : [ ],
   "depends" : [
     "Cro::HTTP::Client",
-    "Hash2Class"
+    "Hash2Class:ver<0.1.1>"
   ],
   "description" : "Provide basic API to Discogs",
   "license" : "Artistic-2.0",
