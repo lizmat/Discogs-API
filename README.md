@@ -1630,7 +1630,7 @@ AUTHOR
 
 Elizabeth Mattijsen <liz@wenzperl.nl>
 
-Source can be located at: https://github.com/lizmat/API-Discogs . Comments and Pull Requests are welcome.
+Source can be located at: https://github.com/lizmat/Discogs-API . Comments and Pull Requests are welcome.
 
 COPYRIGHT AND LICENSE
 =====================

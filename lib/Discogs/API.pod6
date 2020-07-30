@@ -1819,7 +1819,7 @@ The URL of the video, usually a link to a YouTube video.
 
 Elizabeth Mattijsen <liz@wenzperl.nl>
 
-Source can be located at: https://github.com/lizmat/API-Discogs . Comments
+Source can be located at: https://github.com/lizmat/Discogs-API . Comments
 and Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
