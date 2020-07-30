@@ -28,4 +28,4 @@ jobs:
         run: |
           zef install --/test --deps-only .
       - name: Run Tests
-        run: prove -e 'raku -I.' t
+        run: prove -v -e 'raku -I.' t
