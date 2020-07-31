@@ -260,11 +260,10 @@ Perform a general search in the Discogs database, optionally searching specific 
 
 ```raku
 my $search = $discogs.search(
-  query    => "nirvana",  # general query
+  "nirvana",              # optional, general query
   page     => 2,          # page number, default: 1
   per-page => 25,         # items per page, default: object
 
-  query => "nirvana",     # generic search for given string
   type => "release",      # optional search for type only
   title => "nits - urk",  # optional artist - release search query
   release-title => "urk", # optional search for to release name

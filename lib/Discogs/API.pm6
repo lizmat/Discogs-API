@@ -68,7 +68,7 @@ my role PaginationShortcuts {  # does NeedsClient
 
 #--------------- actual class and its attributes -------------------------------
 
-our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
+class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
     has Cro::HTTP::Client $.client = $default-client;
     has AllowedCurrency $.currency = %*ENV<DISCOGS_CURRENCY> // @currencies[0];
     has UInt            $.per-page = 50;
