@@ -28,6 +28,7 @@ subset Quality of Str;
 subset Price of Real;
 subset Status of Str;
 subset Style of Str;
+subset URI of Str where $_ eq "" || .starts-with("/");
 subset URL of Str
   where $_ eq "" || .starts-with("https://") || .starts-with("http://");
 subset Username of Str where /^ \w+ $/;
@@ -129,6 +130,7 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
                   $path.add(
                     $uri.subst('?','QQ',:g)
                         .subst('=','EQ',:g)
+                        .subst("'",'SQ',:g)
                         .subst('&','AM',:g) ~ '.json'
                   ).slurp
                 ))
@@ -566,25 +568,25 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
         )
     }
 
-#-------------- searching the Discogs database ----------------------------------
+#-------------- searching the Discogs database ---------------------------------
 
     our class SearchResult does Hash2Class[
-      cover_image  => URL,
+      cover_image  => { type => URL, name => 'cover-image' },
       id           => UInt,
-      master_id    => { type => UInt, name => 'master-id' },
-      master_url   => { type => URL, name => 'master-url' },
+      master_id    => { type => Any, name => 'master-id' },  # can be null
+      master_url   => { type => Any, name => 'master-url' }, # can be null
       resource_url => { type => URL, name => 'resource-url' },
       thumb        => URL,
       title        => Str,
       type         => Str,
-      uri          => URL,
+      uri          => URI,
       user_data    => { type => StatsData, name => 'user-data' },
     ] {
-        method user-in-collection(ArtistRelease:D: --> UInt:D) {
-            $.user-data.in-collection
+        method user-in-collection(SearchResult:D: --> UInt:D) {
+            $.user-data.in-collection // 0
         }
-        method user-in-wantlist(ArtistRelease:D: --> UInt:D) {
-            $.user-data.in-wantlist
+        method user-in-wantlist(SearchResult:D: --> UInt:D) {
+            $.user-data.in-wantlist // 0
         }
     }
 
@@ -593,14 +595,13 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
       pagination => Pagination,
     ] does NeedsClient does PaginationShortcuts { }
 
-    method search(Discogs::API:D: *%_ --> SearchResults:D) {
+    method search(Discogs::API:D: $query?, *%_ --> SearchResults:D) {
         my str @params;
+        @params.push("q='$query'") if $query;
+
         for %_.kv -> $key, $value {
             if %valid_query_key{$key} {
-                @params.push($key eq 'query'
-                  ?? "q=$value"
-                  !! "$key=$value"
-                );
+                @params.push("$key='$value'");
                 %_{$key}:delete;
             }
         }
