@@ -59,6 +59,12 @@ sub format-ok($format) is export {
     ok $format.qty ~~ UInt, 'did we get a unsigned int for quantity';
 }
 
+sub identifier-ok($identifier) is export {
+    isa-ok $identifier, Discogs::API::Identifier, 'did we get an identifier';
+    ok $identifier.type ~~ Str, 'did we get a type string';
+    ok $identifier.value ~~ Str, 'did we get a value string';
+}
+
 sub image-ok($image) is export {
     isa-ok $image, Discogs::API::Image, 'did we get an image';
     ok $image.height ~~ UInt, 'did we get an integer height';
@@ -69,10 +75,15 @@ sub image-ok($image) is export {
     ok $image.width ~~ UInt, 'did we get an integer width';
 }
 
-sub identifier-ok($identifier) is export {
-    isa-ok $identifier, Discogs::API::Identifier, 'did we get an identifier';
-    ok $identifier.type ~~ Str, 'did we get a type string';
-    ok $identifier.value ~~ Str, 'did we get a value string';
+sub in-collection-wantlist-ok($object) is export {
+    ok $object.community-in-collection ~~ UInt,
+      'did we get an unsigned int for in community collection';
+    ok $object.community-in-wantlist ~~ UInt,
+      'did we get an unsigned int for in community want list';
+    ok $object.user-in-collection ~~ UInt,
+      'did we get an unsigned int for in user collection';
+    ok $object.user-in-wantlist ~~ UInt,
+      'did we get an unsigned int for in user want list';
 }
 
 sub member-ok($member) is export {

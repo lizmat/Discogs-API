@@ -49,10 +49,8 @@ for @versions -> $version {
       'did we get a master release version object';
 
     ok $version.catno ~~ Str, 'did we get a string for catalog number';
-    ok $version.community-in-collection ~~ UInt,
-      'did we get an unsigned int for in community collection';
-    ok $version.community-in-wantlist ~~ UInt,
-      'did we get an unsigned int for in community want list';
+    in-collection-wantlist-ok($version);
+
     ok $version.country ~~ Country, 'did we get a country for country';
     ok $version.format ~~ Str, 'did we get a string for format';
     ok $version.id ~~ UInt, 'did we get an unsigned integer for id';
@@ -74,11 +72,6 @@ for @versions -> $version {
     ok $version.status ~~ Status, 'did we get a status for status';
     ok $version.thumb ~~ URL, 'did we get a URL for thumb';
     ok $version.title ~~ Str, 'did we get a string for title';
-
-    ok $version.user-in-collection ~~ UInt,
-      'did we get an unsigned int for in user collection';
-    ok $version.user-in-wantlist ~~ UInt,
-      'did we get an unsigned int for in user want list';
 }
 
 done-testing;
