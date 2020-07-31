@@ -26,7 +26,7 @@ subset Country of Str;
 subset Genre of Str;
 subset Quality of Str;
 subset Price of Real;
-subset Status of Str where "Accepted";
+subset Status of Str;
 subset Style of Str;
 subset URL of Str
   where $_ eq "" || .starts-with("https://") || .starts-with("http://");
@@ -524,9 +524,9 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
 
     our class ArtistRelease does Hash2Class[
       artist       => Str,
-      format       => Str,
+      format       => { type => Str, default => "" },
       id           => UInt,
-      label        => Str,
+      label        => { type => Str, default => "" },
       resource_url => { type => URL, name => 'resource-url' },
       role         => Str,
       stats        => Stats,
@@ -537,10 +537,10 @@ our class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
       year         => Year,
     ] {
         method user-in-collection(ArtistRelease:D: --> UInt:D) {
-            $.stats.user.in-collection
+            $.stats.user.in-collection // 0
         }
         method user-in-wantlist(ArtistRelease:D: --> UInt:D) {
-            $.stats.user.in-wantlist
+            $.stats.user.in-wantlist // 0
         }
         method community-in-collection(ArtistRelease:D: --> UInt:D) {
             $.stats.community.in-collection
