@@ -49,7 +49,7 @@ for @versions -> $version {
       'did we get a master release version object';
 
     ok $version.catno ~~ Str, 'did we get a string for catalog number';
-    in-collection-wantlist-ok($version);
+    in-community-collection-wantlist-ok($version);
 
     ok $version.country ~~ Country, 'did we get a country for country';
     ok $version.format ~~ Str, 'did we get a string for format';
@@ -72,6 +72,7 @@ for @versions -> $version {
     ok $version.status ~~ Status, 'did we get a status for status';
     ok $version.thumb ~~ URL, 'did we get a URL for thumb';
     ok $version.title ~~ Str, 'did we get a string for title';
+    in-user-collection-wantlist-ok($version);
 }
 
 done-testing;

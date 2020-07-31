@@ -19,6 +19,8 @@ for @releases -> $release {
       'did we get a artist release object';
 
     ok $release.artist ~~ Str, 'did get a string for artist';
+    in-community-collection-wantlist-ok($release);
+
     ok $release.format ~~ Str, 'did get a string for format';
     ok $release.id ~~ UInt, 'did get an unsigned integer for id';
     ok $release.label ~~ Str, 'did get a string for label';
@@ -28,9 +30,9 @@ for @releases -> $release {
     ok $release.thumb ~~ URL, 'did get a URL for thumb';
     ok $release.title ~~ Str, 'did get a string for title';
     ok $release.type ~~ Str, 'did get a string for type';
-    ok $release.year ~~ Year, 'did get a year for year';
 
-    in-collection-wantlist-ok($release);
+    in-user-collection-wantlist-ok($release);
+    ok $release.year ~~ Year, 'did get a year for year';
 }
 
 done-testing;

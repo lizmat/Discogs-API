@@ -75,11 +75,14 @@ sub image-ok($image) is export {
     ok $image.width ~~ UInt, 'did we get an integer width';
 }
 
-sub in-collection-wantlist-ok($object) is export {
+sub in-community-collection-wantlist-ok($object) is export {
     ok $object.community-in-collection ~~ UInt,
       'did we get an unsigned int for in community collection';
     ok $object.community-in-wantlist ~~ UInt,
       'did we get an unsigned int for in community want list';
+}
+
+sub in-user-collection-wantlist-ok($object) is export {
     ok $object.user-in-collection ~~ UInt,
       'did we get an unsigned int for in user collection';
     ok $object.user-in-wantlist ~~ UInt,
