@@ -11,7 +11,7 @@ for "t".IO.dir(:test(*.ends-with: '.t' | '.rakutest')).map(*.Str).sort {
     }
     else {
         $failed++;
-        say $proc.out.slurp;
+        say $proc.out.slurp || "No output received, exit-code $proc.exitcode()";
     }
 }
 
