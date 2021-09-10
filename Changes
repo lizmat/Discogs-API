@@ -2,5 +2,12 @@ Revision history for Discogs-API
 
 {{$NEXT}}
 
+0.0.2  2021-09-10T10:49:16+02:00
+    - Change file extension to .rakumod
+    - Migrate to zef ecosystem
+    - Update email address
+    - Updated copyright year
+    - Updated and tighten dependency
+
 0.0.1  2020-07-31T13:26:35+02:00
     - Initial version

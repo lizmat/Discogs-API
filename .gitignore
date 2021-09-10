@@ -2,3 +2,4 @@
 /API-Discogs-*
 /releases/
 ?
+/lib/Hash2Class.pm6

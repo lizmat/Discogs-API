@@ -1,7 +1,7 @@
 #--------------  external modules ----------------------------------------------
 
-use Hash2Class;
-use Cro::HTTP::Client;
+use Hash2Class:ver<0.1.4>:auth<zef:lizmat>;
+use Cro::HTTP::Client:ver<0.8.6>;
 
 #--------------- file lexical constants ----------------------------------------
 
@@ -68,7 +68,7 @@ my role PaginationShortcuts {  # does NeedsClient
 
 #--------------- actual class and its attributes -------------------------------
 
-class Discogs::API:ver<0.0.1>:auth<cpan:ELIZABETH> {
+class Discogs::API:ver<0.0.2>:auth<zef:lizmat> {
     has Cro::HTTP::Client $.client = $default-client;
     has AllowedCurrency $.currency = %*ENV<DISCOGS_CURRENCY> // @currencies[0];
     has UInt            $.per-page = 50;
