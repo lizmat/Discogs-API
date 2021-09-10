@@ -2,6 +2,9 @@ Revision history for Discogs-API
 
 {{$NEXT}}
 
+0.0.3  2021-09-10T10:53:35+02:00
+    - Argh, botched Hash2Class dependency
+
 0.0.2  2021-09-10T10:49:16+02:00
     - Change file extension to .rakumod
     - Migrate to zef ecosystem
