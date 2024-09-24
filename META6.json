@@ -6,8 +6,8 @@
   "build-depends": [
   ],
   "depends": [
-    "Cro::HTTP::Client",
-    "Hash2Class:ver<0.1.4>:auth<zef:lizmat>"
+    "Cro::HTTP::Client:ver<0.8.9.1>",
+    "Hash2Class:ver<0.1.6>:auth<zef:lizmat>"
   ],
   "description": "Provide basic API to Discogs",
   "license": "Artistic-2.0",

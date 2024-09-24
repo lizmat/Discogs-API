@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/lizmat/Discogs-API/workflows/test/badge.svg)](https://github.com/lizmat/Discogs-API/actions)
+[![Actions Status](https://github.com/lizmat/Discogs-API/actions/workflows/linux.yml/badge.svg)](https://github.com/lizmat/Discogs-API/actions) [![Actions Status](https://github.com/lizmat/Discogs-API/actions/workflows/macos.yml/badge.svg)](https://github.com/lizmat/Discogs-API/actions)
 
 NAME
 ====

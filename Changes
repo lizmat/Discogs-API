@@ -1,6 +1,11 @@
 Revision history for Discogs-API
 
 {{$NEXT}}
+    - Upped dependencies
+    - Modernize file extensions
+    - Add CI badge for each OS
+    - Add sponsor button and link
+    - Update copyright year
 
 0.0.3  2021-09-10T10:53:35+02:00
     - Argh, botched Hash2Class dependency

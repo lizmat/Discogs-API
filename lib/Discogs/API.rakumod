@@ -1,7 +1,7 @@
 #--------------  external modules ----------------------------------------------
 
-use Hash2Class:ver<0.1.4>:auth<zef:lizmat>;
-use Cro::HTTP::Client:ver<0.8.6>;
+use Hash2Class:ver<0.1.6>:auth<zef:lizmat>;
+use Cro::HTTP::Client:ver<0.8.9.1>;
 
 #--------------- file lexical constants ----------------------------------------
 
