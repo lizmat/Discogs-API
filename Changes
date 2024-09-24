@@ -1,6 +1,8 @@
 Revision history for Discogs-API
 
 {{$NEXT}}
+
+0.0.4  2024-09-24T17:11:17+02:00
     - Upped dependencies
     - Modernize file extensions
     - Add CI badge for each OS

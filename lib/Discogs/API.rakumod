@@ -68,7 +68,7 @@ my role PaginationShortcuts {  # does NeedsClient
 
 #--------------- actual class and its attributes -------------------------------
 
-class Discogs::API:ver<0.0.3>:auth<zef:lizmat> {
+class Discogs::API:ver<0.0.4>:auth<zef:lizmat> {
     has Cro::HTTP::Client $.client = $default-client;
     has AllowedCurrency $.currency = %*ENV<DISCOGS_CURRENCY> // @currencies[0];
     has UInt            $.per-page = 50;
