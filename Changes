@@ -1,6 +1,8 @@
 Revision history for Discogs-API
 
 {{$NEXT}}
+
+0.0.5  2024-09-25T15:32:13+02:00
     - Added dependency on META::verauthapi
     - Make sure all classes have proper ^ver / ^auth / ^api information
 
