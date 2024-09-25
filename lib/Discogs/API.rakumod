@@ -68,7 +68,7 @@ my role PaginationShortcuts {  # does NeedsClient
 
 #--------------- actual class and its attributes -------------------------------
 
-class Discogs::API:ver<0.0.4>:auth<zef:lizmat> {
+class Discogs::API {
     has Cro::HTTP::Client $.client = $default-client;
     has AllowedCurrency $.currency = %*ENV<DISCOGS_CURRENCY> // @currencies[0];
     has UInt            $.per-page = 50;
@@ -229,7 +229,7 @@ class Discogs::API:ver<0.0.4>:auth<zef:lizmat> {
       per_page => { type => UInt, name => 'per-page' },
     ] { }
 
-#-------------- getting the information of a master release ---------------------
+#-------------- getting the information of a master release --------------------
     our class Release { ... }  # need to stub for fetch- methods
 
     our class MasterRelease does Hash2Class[
@@ -269,7 +269,7 @@ class Discogs::API:ver<0.0.4>:auth<zef:lizmat> {
         self.GET("/masters/$id", MasterRelease)
     }
 
-#-------------- getting the information of a specific release -------------------
+#-------------- getting the information of a specific release ------------------
 
     our class Release does Hash2Class[
       '@artists'         => ArtistSummary,
@@ -472,7 +472,7 @@ class Discogs::API:ver<0.0.4>:auth<zef:lizmat> {
         self.GET("/labels/$id", Label)
     }
 
-#-------------- getting the releases of a label ---------------------------------
+#-------------- getting the releases of a label --------------------------------
 
     our class LabelRelease does Hash2Class[
       artist       => Str,
@@ -500,7 +500,7 @@ class Discogs::API:ver<0.0.4>:auth<zef:lizmat> {
         )
     }
 
-#-------------- getting the information about an artist -------------------------
+#-------------- getting the information about an artist ------------------------
 
     our class Artist does Hash2Class[
       '@images'         => Image,
@@ -522,7 +522,7 @@ class Discogs::API:ver<0.0.4>:auth<zef:lizmat> {
         self.GET("/artists/$id", Artist)
     }
 
-#-------------- getting the releases of an artist -------------------------------
+#-------------- getting the releases of an artist ------------------------------
 
     our class ArtistRelease does Hash2Class[
       artist       => Str,
@@ -611,6 +611,44 @@ class Discogs::API:ver<0.0.4>:auth<zef:lizmat> {
         )
     }
 }
+
+#--------------- setting :ver :auth :api ---------------------------------------
+
+use META::verauthapi:ver<0.0.1>:auth<zef:lizmat> $?DISTRIBUTION,
+  Discogs::API,
+  Discogs::API::Artist,
+  Discogs::API::ArtistRelease,
+  Discogs::API::ArtistReleases,
+  Discogs::API::ArtistSummary,
+  Discogs::API::CatalogEntry,
+  Discogs::API::Community,
+  Discogs::API::CommunityReleaseRating,
+  Discogs::API::FilterFacet,
+  Discogs::API::Filters,
+  Discogs::API::Format,
+  Discogs::API::Identifier,
+  Discogs::API::Image,
+  Discogs::API::Label,
+  Discogs::API::LabelRelease,
+  Discogs::API::LabelReleases,
+  Discogs::API::MasterRelease,
+  Discogs::API::MasterReleaseVersion,
+  Discogs::API::MasterReleaseVersions,
+  Discogs::API::Member,
+  Discogs::API::Pagination,
+  Discogs::API::Rating,
+  Discogs::API::Release,
+  Discogs::API::Stats,
+  Discogs::API::StatsData,
+  Discogs::API::SearchResult,
+  Discogs::API::SearchResults,
+  Discogs::API::SubLabel,
+  Discogs::API::Track,
+  Discogs::API::UserReleaseRating,
+  Discogs::API::Value,
+  Discogs::API::Video,
+  Discogs::API::User,
+;
 
 #--------------- runtime initialisations ---------------------------------------
 
