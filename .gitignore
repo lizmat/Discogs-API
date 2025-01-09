@@ -1,5 +1,5 @@
 .precomp/
 /API-Discogs-*
 /releases/
+*.rakucov
 ?
-/lib/Hash2Class.pm6
